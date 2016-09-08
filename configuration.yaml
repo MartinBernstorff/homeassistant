@@ -1,0 +1,177 @@
+homeassistant:
+  name: Home
+  latitude: 56.1972
+  longitude: 10.248
+  # Impacts weather/sunrise data
+  elevation: 4
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Copenhagen
+
+frontend:
+http:
+  # Uncomment this to add a password (recommended!)
+  # api_password: PASSWORD
+
+updater:
+history:
+logbook:
+#sun:
+
+# Weather Prediction
+#sensor:
+  #platform: yr
+
+#################
+## MODULS INIT ##
+#################
+##Setup hue lights
+light:
+  platform: hue
+  host: 192.168.1.64
+  allow_unreachable: true
+
+scene:
+  - name: Livingroom normal
+    entities:
+        light.Corner:
+            state: on
+            transition: 5
+            brightness: 100
+            xy_color: [ 0.4448, 0.4066 ]
+  - name: Livingroom dim
+    entities:
+        light.Corner:
+            state: off
+            transition: 5
+        light.Loft:
+            state: off
+            transition: 5
+
+##Setup media players
+media_player:
+- platform: pioneer
+  host: 192.168.1.22
+  name: receiver
+- platform: plex
+  name: rasplex
+  scan_interval: 2
+
+############
+## Groups ##
+############
+group:
+  morning:
+    name: Morning
+    icon: mdi:weather-sunset
+    entities:
+      - script.sunrise
+  media:
+    name: Media
+    icon: mdi:movie
+    entities:
+      - script.moviemode
+      - media_player.receiver
+
+###################
+## CUSTOMIZATION ##
+###################
+
+customize:
+  media_player.rasplex:
+    hidden: true
+
+#############
+## SCRIPTS ##
+#############
+
+
+script:
+  ### Setup wake up script ###
+  sunrise:
+    alias: Sunrise
+    sequence:
+      - alias: Initial fade
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 100
+          transition: 10
+          xy_color: [ 0.3466, 0.3528 ]
+      - alias: Initial fade
+        service: light.turn_on
+        data:
+          entity_id: light.Toilet
+          brightness: 80
+          transition: 10
+      - delay:
+          seconds: 10
+      - alias: Living room lights on
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 255
+          transition: 900
+          xy_color: [ 0.4704, 0.4127 ]
+  moviemode:
+    alias: Movie mode
+    sequence:
+      - alias: Turn on receiver
+        service: media_player.turn_on
+        data:
+          entity_id: media_player.receiver
+      - delay:
+          seconds: 9
+      - alias: Switch to tuner
+        service: media_player.select_source
+        data:
+          entity_id: media_player.receiver
+          source: TUNER
+      - delay:
+          seconds: 1
+      - alias: Turn up volume
+        service: media_player.volume_set
+        data:
+          entity_id: media_player.receiver
+          volume_level: 0.8
+      - delay:
+          seconds: 5
+      - alias: Switch to RPI
+        service: media_player.select_source
+        data:
+          entity_id: media_player.receiver
+          source: RPI
+      - delay:
+          seconds: 1
+      - alias: Turn down volume
+        service: media_player.volume_set
+        data:
+          entity_id: media_player.receiver
+          volume_level: 0.7
+
+
+#################################
+## Setup movie mode automation ##
+#################################
+
+
+
+##Dim on pause/play
+automation:
+  - alias: "Media player paused/stopped"
+    trigger:
+      - platform: state
+        entity_id: media_player.rasplex
+        from: 'playing'
+    action:
+        service: scene.turn_on
+        entity_id: scene.livingroom_normal
+
+  - alias: "Media player playing"
+    trigger:
+      - platform: state
+        entity_id: media_player.rasplex
+        to: 'playing'
+    action:
+        service: scene.turn_on
+        entity_id: scene.livingroom_dim
