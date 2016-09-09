@@ -8,6 +8,20 @@ homeassistant:
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/Copenhagen
 
+  ###################
+  ## CUSTOMIZATION ##
+  ###################
+
+  customize:
+    media_player.rasplex:
+      hidden: true
+    scene.livingroom_dim:
+      hidden: true
+    scene.livingroom_normal:
+      hidden: true
+    script.awaken:
+      hidden: true
+
 frontend:
 http:
   # Uncomment this to add a password (recommended!)
@@ -63,56 +77,99 @@ media_player:
 group:
   morning:
     name: Morning
-    icon: mdi:weather-sunset
     entities:
       - script.sunrise
+      - input_boolean.alarm
   media:
     name: Media
     icon: mdi:movie
     entities:
       - script.moviemode
       - media_player.receiver
-
-###################
-## CUSTOMIZATION ##
-###################
-
-customize:
-  media_player.rasplex:
-    hidden: true
+############
+## INPUTS ##
+############
+input_boolean:
+  alarm:
+    name: Sunrise-alarm
+    icon: mdi:weather-sunset
+    initial: on
+  sunset:
+    name: Sunset
+    icon: mdi:moon
+    initial: on
 
 #############
 ## SCRIPTS ##
 #############
-
-
 script:
   ### Setup wake up script ###
   sunrise:
-    alias: Sunrise
+    alias: Carpe diem!
     sequence:
+      - alias: Kill fake sun
+        service: light.turn_off
+        data:
+          entity_id: light.Seng
       - alias: Initial fade
         service: light.turn_on
         data:
           entity_id: light.Corner
           brightness: 100
-          transition: 10
-          xy_color: [ 0.3466, 0.3528 ]
-      - alias: Initial fade
+          transition: 20
+          xy_color: [ 0.4704, 0.4127 ]
+      - alias: Toilet lights on
         service: light.turn_on
         data:
           entity_id: light.Toilet
           brightness: 80
           transition: 10
       - delay:
-          seconds: 10
-      - alias: Living room lights on
+          seconds: 20
+      - alias: Secondary fase
         service: light.turn_on
         data:
           entity_id: light.Corner
           brightness: 255
-          transition: 900
-          xy_color: [ 0.4704, 0.4127 ]
+          transition: 2700
+          rgb_color: [ 0.3833, 0.3785 ]
+
+  awaken:
+    alias: Wake me up with my fake sun
+    sequence:
+      - alias: Initial fade
+        service: light.turn_on
+        data:
+          entity_id: light.Seng
+          brightness: 1
+          transition: 10
+      - delay:
+          minutes: 30
+      - alias: Turn to 50%
+        service: light.turn_on
+        data:
+          entity_id: light.Seng
+          brightness: 128
+          transition: 10
+      - delay:
+          minutes: 30
+      - alias: Turn to 100%
+        service: light.turn_on
+        data:
+          entity_id: light.Seng
+          brightness: 255
+          transition: 10
+
+  sunset:
+    alias: Sunset
+    sequence:
+      - alias: Fade corner out slowly
+        service: light.turn_off
+        data:
+          entity_id: light.Corner
+          brightness: 0
+          transition: 5400
+
   moviemode:
     alias: Movie mode
     sequence:
@@ -135,7 +192,7 @@ script:
           entity_id: media_player.receiver
           volume_level: 0.8
       - delay:
-          seconds: 5
+          seconds: 2
       - alias: Switch to RPI
         service: media_player.select_source
         data:
@@ -153,11 +210,8 @@ script:
 #################################
 ## Setup movie mode automation ##
 #################################
-
-
-
-##Dim on pause/play
 automation:
+  ##Dim on pause/play
   - alias: "Media player paused/stopped"
     trigger:
       - platform: state
@@ -175,3 +229,33 @@ automation:
     action:
         service: scene.turn_on
         entity_id: scene.livingroom_dim
+
+  ##Fade in lights
+  - alias: "Awaken"
+    trigger:
+      - platform: time
+        hours: 6
+        minutes: 0
+        seconds: 0
+    condition:
+      - condition: state
+        entity_id: input_boolean.alarm
+        state: 'on'
+    action:
+      service: script.turn_on
+      entity_id: script.awaken
+
+  ##Fade out lights
+  - alias: "Sunset"
+    trigger:
+      - platform: time
+        hours: 19
+        minutes: 30
+        seconds: 0
+    condition:
+      - condition: state
+        entity_id: input_boolean.sunset
+        state: 'on'
+    action:
+      service: script.turn_on
+      entity_id: script.sunset

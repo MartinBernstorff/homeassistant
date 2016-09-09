@@ -1,1 +1,4 @@
-16-09-08 19:49:41 homeassistant.loader: Unable to find component customize
+16-09-09 17:30:22 homeassistant.util.yaml: while parsing a block mapping
+  in "/home/hass/.homeassistant/configuration.yaml", line 230, column 5
+expected <block end>, but found '-'
+  in "/home/hass/.homeassistant/configuration.yaml", line 245, column 5
