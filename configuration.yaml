@@ -19,8 +19,19 @@ homeassistant:
       hidden: true
     scene.livingroom_normal:
       hidden: true
+    #Circadian
     script.awaken:
       hidden: true
+    script.sunset:
+      hidden: true
+    script.sunrise:
+      icon: mdi:duck
+    #Media
+    script.moviemode:
+      icon: mdi:movie
+    switch.benq:
+      icon: mdi:projector
+
 
 frontend:
 http:
@@ -36,13 +47,13 @@ logbook:
 #sensor:
   #platform: yr
 
-#################
-## MODULS INIT ##
-#################
+##################
+## MODULES INIT ##
+##################
 ##Setup hue lights
 light:
   platform: hue
-  host: 192.168.1.64
+  host: 192.168.1.108
   allow_unreachable: true
 
 scene:
@@ -62,10 +73,29 @@ scene:
             state: off
             transition: 5
 
+switch:
+  - platform: command_line
+    switches:
+      benq:
+        command_on: "/usr/bin/curl -X GET http://192.168.1.109/benqOn"
+        command_off: "/usr/bin/curl -X GET http://192.168.1.109/benqOff"
+        friendly_name: BenQ
+#  - platform: template
+#    switches:
+#      receiver:
+#        friendly_name: 'Receiver'
+#        value_template: '{{ is_state('media_player.receiver', 'on') }}'
+#        turn_on:
+#          service: media_player.turn_on
+#          entity_id: media_player.receiver
+#        turn_off:
+#          service: media_player.turn_off
+#          entity_id: media_player.receiver
+
 ##Setup media players
 media_player:
 - platform: pioneer
-  host: 192.168.1.22
+  host: 192.168.1.106
   name: receiver
 - platform: plex
   name: rasplex
@@ -75,28 +105,37 @@ media_player:
 ## Groups ##
 ############
 group:
-  morning:
-    name: Morning
+  light_automation:
+    name: Light automation
     entities:
       - script.sunrise
       - input_boolean.alarm
+      - input_boolean.sunset
+      - input_boolean.movie_fade
   media:
     name: Media
     icon: mdi:movie
     entities:
       - script.moviemode
+      - switch.benq
       - media_player.receiver
+
+
 ############
 ## INPUTS ##
 ############
 input_boolean:
   alarm:
-    name: Sunrise-alarm
+    name: Sunrise
     icon: mdi:weather-sunset
     initial: on
   sunset:
     name: Sunset
-    icon: mdi:moon
+    icon: mdi:brightness-4
+    initial: on
+  movie_fade:
+    name: Movie fade
+    icon: mdi:spotlight
     initial: on
 
 #############
@@ -105,7 +144,7 @@ input_boolean:
 script:
   ### Setup wake up script ###
   sunrise:
-    alias: Carpe diem!
+    alias: Carpe diem
     sequence:
       - alias: Kill fake sun
         service: light.turn_off
@@ -132,7 +171,13 @@ script:
           entity_id: light.Corner
           brightness: 255
           transition: 2700
-          rgb_color: [ 0.3833, 0.3785 ]
+          xy_color: [ 0.3833, 0.3785 ]
+      - alias: Secondary fase
+        service: light.turn_on
+        data:
+          entity_id: light.Toilet
+          brightness: 255
+          transition: 2700
 
   awaken:
     alias: Wake me up with my fake sun
@@ -164,15 +209,20 @@ script:
     alias: Sunset
     sequence:
       - alias: Fade corner out slowly
-        service: light.turn_off
+        service: light.turn_on
         data:
           entity_id: light.Corner
           brightness: 0
-          transition: 5400
+          transition: 6553
+          xy_color: [ 0.678, 0.32 ]
 
   moviemode:
-    alias: Movie mode
+    alias: Moviemode
     sequence:
+      - alias: Turn on projector
+        service: switch.turn_on
+        data:
+          entity_id: switch.benq
       - alias: Turn on receiver
         service: media_player.turn_on
         data:
@@ -185,7 +235,7 @@ script:
           entity_id: media_player.receiver
           source: TUNER
       - delay:
-          seconds: 1
+          seconds: 2
       - alias: Turn up volume
         service: media_player.volume_set
         data:
@@ -217,6 +267,10 @@ automation:
       - platform: state
         entity_id: media_player.rasplex
         from: 'playing'
+    condition:
+      - condition: state
+        entity_id: input_boolean.movie_fade
+        state: 'on'
     action:
         service: scene.turn_on
         entity_id: scene.livingroom_normal
@@ -226,6 +280,10 @@ automation:
       - platform: state
         entity_id: media_player.rasplex
         to: 'playing'
+    condition:
+      - condition: state
+        entity_id: input_boolean.movie_fade
+        state: 'on'
     action:
         service: scene.turn_on
         entity_id: scene.livingroom_dim
@@ -235,7 +293,7 @@ automation:
     trigger:
       - platform: time
         hours: 6
-        minutes: 0
+        minutes: 20
         seconds: 0
     condition:
       - condition: state
@@ -250,7 +308,7 @@ automation:
     trigger:
       - platform: time
         hours: 19
-        minutes: 30
+        minutes: 0
         seconds: 0
     condition:
       - condition: state

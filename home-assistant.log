@@ -1,4 +1,1 @@
-16-09-09 17:30:22 homeassistant.util.yaml: while parsing a block mapping
-  in "/home/hass/.homeassistant/configuration.yaml", line 230, column 5
-expected <block end>, but found '-'
-  in "/home/hass/.homeassistant/configuration.yaml", line 245, column 5
+16-09-12 20:13:02 homeassistant.bootstrap: Invalid config for [homeassistant]: Invalid entity ID: automation.media_player_paused/stopped for dictionary value @ data['customize']. Got OrderedDict([('automation.awaken', OrderedDict([('hidden', True)])), ('automation.media_player_paused/stopped', OrderedDict([('hidden', True)])), ('automation.media_player_playing', OrderedDict([('hidden', True)])), ('automation.sunset', OrderedDict([('hidden', True)])), ('media_player.rasplex', OrderedDict([('hidden', True)])), ('scene.livingroom_dim', OrderedDict([('hidden', True)])), ('scene.livingroom_normal', OrderedDict([('hidden', True)])), ('script.awaken', OrderedDict([('hidden', Tru... (See /home/hass/.homeassistant/configuration.yaml:2)
