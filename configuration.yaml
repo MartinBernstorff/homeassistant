@@ -13,24 +13,37 @@ homeassistant:
   ###################
 
   customize:
+    script.sunrise:
+      icon: mdi:duck
+
+    switch.benq:
+      icon: mdi:projector
+
+    #HIDE
     media_player.rasplex:
       hidden: true
     scene.livingroom_dim:
       hidden: true
     scene.livingroom_normal:
       hidden: true
-    #Circadian
     script.awaken:
       hidden: true
     script.sunset:
       hidden: true
-    script.sunrise:
-      icon: mdi:duck
-    #Media
-    script.moviemode:
-      icon: mdi:movie
-    switch.benq:
-      icon: mdi:projector
+    script.moviemodeon:
+      hidden: true
+    automation.awaken:
+      hidden: true
+    automation.paused:
+      hidden: true
+    automation.playing:
+      hidden: true
+    automation.mmOff:
+      hidden: true
+    automation.mmOn:
+      hidden: true
+    automation.sunset:
+      hidden: true
 
 
 frontend:
@@ -38,13 +51,16 @@ http:
   # Uncomment this to add a password (recommended!)
   # api_password: PASSWORD
 
-updater:
+#updater:
 history:
 logbook:
 #sun:
 
-# Weather Prediction
+#############
+## SENSORS ##
+#############
 #sensor:
+# Weather Prediction
   #platform: yr
 
 ##################
@@ -61,17 +77,17 @@ scene:
     entities:
         light.Corner:
             state: on
-            transition: 5
-            brightness: 100
+            transition: 10
+            brightness: 30
             xy_color: [ 0.4448, 0.4066 ]
   - name: Livingroom dim
     entities:
         light.Corner:
             state: off
-            transition: 5
+            transition: 3
         light.Loft:
             state: off
-            transition: 5
+            transition: 3
 
 switch:
   - platform: command_line
@@ -82,24 +98,24 @@ switch:
         friendly_name: BenQ
 #  - platform: template
 #    switches:
-#      receiver:
-#        friendly_name: 'Receiver'
-#        value_template: '{{ is_state('media_player.receiver', 'on') }}'
+#      pioneer:
+#        friendly_name: 'pioneer'
+#        value_template: '{{ is_state('switch.benq', 'on') }}'
 #        turn_on:
 #          service: media_player.turn_on
-#          entity_id: media_player.receiver
+#          entity_id: media_player.pioneer
 #        turn_off:
 #          service: media_player.turn_off
-#          entity_id: media_player.receiver
+#          entity_id: media_player.pioneer
 
 ##Setup media players
 media_player:
 - platform: pioneer
   host: 192.168.1.106
-  name: receiver
+  name: pioneer
 - platform: plex
   name: rasplex
-  scan_interval: 2
+  scan_interval: 3
 
 ############
 ## Groups ##
@@ -116,10 +132,9 @@ group:
     name: Media
     icon: mdi:movie
     entities:
-      - script.moviemode
+      - input_boolean.mm
       - switch.benq
-      - media_player.receiver
-
+      - media_player.pioneer
 
 ############
 ## INPUTS ##
@@ -137,6 +152,10 @@ input_boolean:
     name: Movie fade
     icon: mdi:spotlight
     initial: on
+  mm:
+    name: Movie mode
+    icon: mdi:movie
+    initial: off
 
 #############
 ## SCRIPTS ##
@@ -189,21 +208,21 @@ script:
           brightness: 1
           transition: 10
       - delay:
-          minutes: 30
+          minutes: 10
       - alias: Turn to 50%
         service: light.turn_on
         data:
           entity_id: light.Seng
           brightness: 128
-          transition: 10
+          transition: 60
       - delay:
-          minutes: 30
+          minutes: 10
       - alias: Turn to 100%
         service: light.turn_on
         data:
           entity_id: light.Seng
           brightness: 255
-          transition: 10
+          transition: 60
 
   sunset:
     alias: Sunset
@@ -216,45 +235,46 @@ script:
           transition: 6553
           xy_color: [ 0.678, 0.32 ]
 
-  moviemode:
+  moviemodeon:
     alias: Moviemode
     sequence:
+      - alias: Turn on pioneer
+        service: media_player.turn_on
+        data:
+          entity_id: media_player.pioneer
+      - delay:
+          seconds: 10
       - alias: Turn on projector
         service: switch.turn_on
         data:
           entity_id: switch.benq
-      - alias: Turn on receiver
-        service: media_player.turn_on
-        data:
-          entity_id: media_player.receiver
-      - delay:
-          seconds: 9
       - alias: Switch to tuner
         service: media_player.select_source
         data:
-          entity_id: media_player.receiver
+          entity_id: media_player.pioneer
           source: TUNER
       - delay:
-          seconds: 2
+          seconds: 1
       - alias: Turn up volume
         service: media_player.volume_set
         data:
-          entity_id: media_player.receiver
+          entity_id: media_player.pioneer
           volume_level: 0.8
       - delay:
-          seconds: 2
+          seconds: 1
       - alias: Switch to RPI
         service: media_player.select_source
         data:
-          entity_id: media_player.receiver
+          entity_id: media_player.pioneer
           source: RPI
       - delay:
           seconds: 1
       - alias: Turn down volume
         service: media_player.volume_set
         data:
-          entity_id: media_player.receiver
+          entity_id: media_player.pioneer
           volume_level: 0.7
+
 
 
 #################################
@@ -262,7 +282,7 @@ script:
 #################################
 automation:
   ##Dim on pause/play
-  - alias: "Media player paused/stopped"
+  - alias: "Paused"
     trigger:
       - platform: state
         entity_id: media_player.rasplex
@@ -275,7 +295,7 @@ automation:
         service: scene.turn_on
         entity_id: scene.livingroom_normal
 
-  - alias: "Media player playing"
+  - alias: "Playing"
     trigger:
       - platform: state
         entity_id: media_player.rasplex
@@ -293,7 +313,7 @@ automation:
     trigger:
       - platform: time
         hours: 6
-        minutes: 20
+        minutes: 00
         seconds: 0
     condition:
       - condition: state
@@ -317,3 +337,25 @@ automation:
     action:
       service: script.turn_on
       entity_id: script.sunset
+
+  #Turn on projector and receiver
+  - alias: "mmOn"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.mm
+        state: 'on'
+    action:
+      service: script.turn_on
+      entity_id: script.moviemodeon
+
+  #Turn off projector and receiver
+  - alias: "mmOff"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.mm
+        state: 'off'
+    action:
+      - service: switch.turn_off
+        entity_id: switch.benq
+      - service: media_player.turn_off
+        entity_id: media_player.pioneer

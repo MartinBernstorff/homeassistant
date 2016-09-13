@@ -1,1 +1,23 @@
-16-09-12 20:13:02 homeassistant.bootstrap: Invalid config for [homeassistant]: Invalid entity ID: automation.media_player_paused/stopped for dictionary value @ data['customize']. Got OrderedDict([('automation.awaken', OrderedDict([('hidden', True)])), ('automation.media_player_paused/stopped', OrderedDict([('hidden', True)])), ('automation.media_player_playing', OrderedDict([('hidden', True)])), ('automation.sunset', OrderedDict([('hidden', True)])), ('media_player.rasplex', OrderedDict([('hidden', True)])), ('scene.livingroom_dim', OrderedDict([('hidden', True)])), ('scene.livingroom_normal', OrderedDict([('hidden', True)])), ('script.awaken', OrderedDict([('hidden', Tru... (See /home/hass/.homeassistant/configuration.yaml:2)
+16-09-13 10:43:50 homeassistant.core: BusHandler:Exception doing job
+Traceback (most recent call last):
+  File "/srv/hass/lib/python3.4/site-packages/homeassistant/core.py", line 865, in job_handler
+    func(*args)
+  File "/srv/hass/lib/python3.4/site-packages/homeassistant/core.py", line 730, in _execute_service
+    service(call)
+  File "/srv/hass/lib/python3.4/site-packages/homeassistant/core.py", line 586, in __call__
+    self.func(call)
+  File "/srv/hass/lib/python3.4/site-packages/homeassistant/components/media_player/__init__.py", line 321, in volume_set_service
+    player.set_volume_level(volume)
+  File "/srv/hass/lib/python3.4/site-packages/homeassistant/components/media_player/pioneer.py", line 186, in set_volume_level
+    self.telnet_command(str(round(volume * MAX_VOLUME)).zfill(3) + "VL")
+  File "/srv/hass/lib/python3.4/site-packages/homeassistant/components/media_player/pioneer.py", line 79, in telnet_command
+    telnet = telnetlib.Telnet(self._host)
+  File "/usr/lib/python3.4/telnetlib.py", line 221, in __init__
+    self.open(host, port, timeout)
+  File "/usr/lib/python3.4/telnetlib.py", line 237, in open
+    self.sock = socket.create_connection((host, port), timeout)
+  File "/usr/lib/python3.4/socket.py", line 512, in create_connection
+    raise err
+  File "/usr/lib/python3.4/socket.py", line 503, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
