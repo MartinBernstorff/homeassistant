@@ -143,11 +143,11 @@ input_boolean:
   alarm:
     name: Sunrise
     icon: mdi:weather-sunset
-    initial: on
+    initial: off
   sunset:
     name: Sunset
     icon: mdi:brightness-4
-    initial: on
+    initial: off
   movie_fade:
     name: Movie fade
     icon: mdi:spotlight
@@ -174,29 +174,29 @@ script:
         data:
           entity_id: light.Corner
           brightness: 100
-          transition: 20
+          transition: 100
           xy_color: [ 0.4704, 0.4127 ]
       - alias: Toilet lights on
         service: light.turn_on
         data:
           entity_id: light.Toilet
-          brightness: 80
-          transition: 10
+          brightness: 50
+          transition: 100
       - delay:
-          seconds: 20
+          seconds: 100
       - alias: Secondary fase
         service: light.turn_on
         data:
           entity_id: light.Corner
           brightness: 255
-          transition: 2700
-          xy_color: [ 0.3833, 0.3785 ]
+          transition: 900
+          rgb_color: [ 0.355, 0.3593 ]
       - alias: Secondary fase
         service: light.turn_on
         data:
           entity_id: light.Toilet
           brightness: 255
-          transition: 2700
+          transition: 900
 
   awaken:
     alias: Wake me up with my fake sun
@@ -208,7 +208,7 @@ script:
           brightness: 1
           transition: 10
       - delay:
-          minutes: 10
+          minutes: 20
       - alias: Turn to 50%
         service: light.turn_on
         data:
@@ -216,7 +216,7 @@ script:
           brightness: 128
           transition: 60
       - delay:
-          minutes: 10
+          minutes: 20
       - alias: Turn to 100%
         service: light.turn_on
         data:
@@ -232,8 +232,14 @@ script:
         data:
           entity_id: light.Corner
           brightness: 0
-          transition: 6553
+          transition: 3600
           xy_color: [ 0.678, 0.32 ]
+      - delay:
+          minutes: 60
+      - alias: Turn off corner light
+        service: light.turn_off
+        data:
+          entity_id: light.Corner
 
   moviemodeon:
     alias: Moviemode
@@ -313,7 +319,7 @@ automation:
     trigger:
       - platform: time
         hours: 6
-        minutes: 00
+        minutes: 20
         seconds: 0
     condition:
       - condition: state
@@ -327,8 +333,8 @@ automation:
   - alias: "Sunset"
     trigger:
       - platform: time
-        hours: 19
-        minutes: 0
+        hours: 20
+        minutes: 30
         seconds: 0
     condition:
       - condition: state
