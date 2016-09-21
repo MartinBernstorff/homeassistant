@@ -197,6 +197,14 @@ script:
           entity_id: light.Toilet
           brightness: 255
           transition: 900
+      - delay:
+          minutes: 2
+      - alias: Fade in ceiling light
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 255
+          transition: 900
 
   awaken:
     alias: Wake me up with my fake sun
