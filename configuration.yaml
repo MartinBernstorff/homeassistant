@@ -205,24 +205,8 @@ script:
         service: light.turn_on
         data:
           entity_id: light.Seng
-          brightness: 1
-          transition: 10
-      - delay:
-          minutes: 20
-      - alias: Turn to 50%
-        service: light.turn_on
-        data:
-          entity_id: light.Seng
-          brightness: 128
-          transition: 60
-      - delay:
-          minutes: 20
-      - alias: Turn to 100%
-        service: light.turn_on
-        data:
-          entity_id: light.Seng
           brightness: 255
-          transition: 60
+          transition: 1800
 
   sunset:
     alias: Sunset
@@ -319,7 +303,7 @@ automation:
     trigger:
       - platform: time
         hours: 6
-        minutes: 20
+        minutes: 0
         seconds: 0
     condition:
       - condition: state
