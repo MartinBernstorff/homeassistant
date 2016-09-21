@@ -175,7 +175,7 @@ script:
           entity_id: light.Corner
           brightness: 100
           transition: 100
-          xy_color: [ 0.4704, 0.4127 ]
+          rgb_color: [ 255, 0, 0 ]
       - alias: Toilet lights on
         service: light.turn_on
         data:
@@ -190,7 +190,7 @@ script:
           entity_id: light.Corner
           brightness: 255
           transition: 900
-          rgb_color: [ 0.355, 0.3593 ]
+          rgb_color: [ 255, 255, 255 ]
       - alias: Secondary fase
         service: light.turn_on
         data:
