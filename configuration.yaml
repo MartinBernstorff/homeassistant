@@ -159,6 +159,22 @@ input_boolean:
 #############
 script:
   ### Setup wake up script ###
+  carpediem:
+    alias: Carpe diem
+    sequence:
+      - alias: Corner
+        service: script.turn_on
+        data:
+          entity_id: script.carpecorner
+      - alias: Toilet
+        service: script.turn_on
+        data:
+          entity_id: script.carpetoilet
+      - alias: Ceiling
+        service: script.turn_on
+        data:
+          entity_id: script.carpeceiling
+
   carpecorner:
     alias: Carpe corner
     sequence:
@@ -210,7 +226,7 @@ script:
           brightness: 255
           transition: 1
 
-  carpe-ceiling:
+  carpeceiling:
     alias: Carpe ceiling
     sequence:
       - delay:
