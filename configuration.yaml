@@ -26,13 +26,13 @@ homeassistant:
       hidden: true
     scene.livingroom_normal:
       hidden: true
-    script.awaken:
+    script.sunrise:
       hidden: true
     script.sunset:
       hidden: true
     script.moviemodeon:
       hidden: true
-    automation.awaken:
+    automation.sunrise:
       hidden: true
     automation.paused:
       hidden: true
@@ -162,7 +162,7 @@ input_boolean:
 #############
 script:
   ### Setup wake up script ###
-  sunrise-corner:
+  carpe-corner:
     alias: Carpe corner
     sequence:
       - alias: Kill fake sun
@@ -195,7 +195,7 @@ script:
           transition: 600
           rgb_color: [ 255, 255, 255 ]
 
-  sunrise-toilet:
+  carpe-toilet:
     alias: Carpe toilet
     sequence:
       - alias: Toilet lights on
@@ -213,7 +213,7 @@ script:
           brightness: 255
           transition: 900
 
-  sunrise-ceiling:
+  carpe-ceiling:
     alias: Carpe ceiling
     sequence:
       - delay:
@@ -225,7 +225,7 @@ script:
           brightness: 255
           transition: 900
 
-  awaken:
+  sunrise:
     alias: Wake me up with my fake sun
     sequence:
       - alias: Initial fade
@@ -325,8 +325,8 @@ automation:
         service: scene.turn_on
         entity_id: scene.livingroom_dim
 
-  ##Fade in lights
-  - alias: "Awaken"
+  ##Sunrise
+  - alias: "Sunrise"
     trigger:
       - platform: time
         hours: 6
@@ -338,7 +338,7 @@ automation:
         state: 'on'
     action:
       service: script.turn_on
-      entity_id: script.awaken
+      entity_id: script.sunrise
 
   ##Fade out lights
   - alias: "Sunset"
