@@ -162,8 +162,8 @@ input_boolean:
 #############
 script:
   ### Setup wake up script ###
-  sunrise:
-    alias: Carpe diem
+  sunrise-corner:
+    alias: Carpe corner
     sequence:
       - alias: Kill fake sun
         service: light.turn_off
@@ -173,9 +173,31 @@ script:
         service: light.turn_on
         data:
           entity_id: light.Corner
-          brightness: 100
-          transition: 100
+          brightness: 1
+          transition: 1
           rgb_color: [ 255, 0, 0 ]
+      - delay:
+          seconds: 1
+      - alias: Orange intermediate
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 100
+          transition: 60
+          rgb_color: [ 255, 168, 0 ]
+      - delay:
+          seconds: 60
+      - alias: End-point
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 255
+          transition: 600
+          rgb_color: [ 255, 255, 255 ]
+
+  sunrise-toilet:
+    alias: Carpe toilet
+    sequence:
       - alias: Toilet lights on
         service: light.turn_on
         data:
@@ -187,18 +209,15 @@ script:
       - alias: Secondary fase
         service: light.turn_on
         data:
-          entity_id: light.Corner
-          brightness: 255
-          transition: 900
-          rgb_color: [ 255, 255, 255 ]
-      - alias: Secondary fase
-        service: light.turn_on
-        data:
           entity_id: light.Toilet
           brightness: 255
           transition: 900
+
+  sunrise-ceiling:
+    alias: Carpe ceiling
+    sequence:
       - delay:
-          minutes: 2
+          seconds: 300
       - alias: Fade in ceiling light
         service: light.turn_on
         data:
