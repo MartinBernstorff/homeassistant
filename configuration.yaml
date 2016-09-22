@@ -13,6 +13,8 @@ homeassistant:
   ###################
 
   customize:
+    script.carpediem:
+      icon: mdi:duck
     switch.benq:
       icon: mdi:projector
 
@@ -26,6 +28,12 @@ homeassistant:
     script.sunrise:
       hidden: true
     script.sunset:
+      hidden: true
+    script.carpecorner:
+      hidden: true
+    script.carpeceiling:
+      hidden: true
+    script.carpetoilet:
       hidden: true
     script.moviemodeon:
       hidden: true
@@ -121,7 +129,7 @@ group:
   light_automation:
     name: Light automation
     entities:
-      - script.sunrise
+      - script.carpediem
       - input_boolean.alarm
       - input_boolean.sunset
       - input_boolean.movie_fade
