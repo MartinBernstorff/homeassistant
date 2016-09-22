@@ -214,7 +214,7 @@ script:
         data:
           entity_id: light.Seng
           brightness: 255
-          transition: 1800
+          transition: 120
 
   sunset:
     alias: Sunset
