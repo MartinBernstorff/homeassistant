@@ -101,17 +101,6 @@ switch:
         command_on: "/usr/bin/curl -X GET http://192.168.1.109/benqOn"
         command_off: "/usr/bin/curl -X GET http://192.168.1.109/benqOff"
         friendly_name: BenQ
-#  - platform: template
-#    switches:
-#      pioneer:
-#        friendly_name: 'pioneer'
-#        value_template: '{{ is_state('switch.benq', 'on') }}'
-#        turn_on:
-#          service: media_player.turn_on
-#          entity_id: media_player.pioneer
-#        turn_off:
-#          service: media_player.turn_off
-#          entity_id: media_player.pioneer
 
 ##Setup media players
 media_player:
@@ -194,8 +183,8 @@ script:
         service: light.turn_on
         data:
           entity_id: light.Corner
-          brightness: 1
-          transition: 1
+          brightness: 150
+          transition: 60
           xy_color: [ 0.674, 0.322 ]
       - delay:
           seconds: 60
@@ -204,8 +193,8 @@ script:
         data:
           entity_id: light.Corner
           brightness: 255
-          transition: 600
-          rgb_color: [0.3852, 0.3737]
+          transition: 900
+          xy_color: [ 0.3852, 0.3737 ]
 
   carpetoilet:
     alias: Carpe toilet
