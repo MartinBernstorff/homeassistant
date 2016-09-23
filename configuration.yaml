@@ -196,16 +196,7 @@ script:
           entity_id: light.Corner
           brightness: 1
           transition: 1
-          rgb_color: [ 255, 0, 0 ]
-      - delay:
-          seconds: 1
-      - alias: Orange intermediate
-        service: light.turn_on
-        data:
-          entity_id: light.Corner
-          brightness: 100
-          transition: 60
-          rgb_color: [ 255, 168, 0 ]
+          xy_color: [ 0.674, 0.322 ]
       - delay:
           seconds: 60
       - alias: End-point
@@ -214,7 +205,7 @@ script:
           entity_id: light.Corner
           brightness: 255
           transition: 600
-          rgb_color: [ 255, 255, 255 ]
+          rgb_color: [0.3852, 0.3737]
 
   carpetoilet:
     alias: Carpe toilet
@@ -232,7 +223,7 @@ script:
         data:
           entity_id: light.Toilet
           brightness: 255
-          transition: 1
+          transition: 100
 
   carpeceiling:
     alias: Carpe ceiling
