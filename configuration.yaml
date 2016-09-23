@@ -119,7 +119,7 @@ group:
     name: Light automation
     entities:
       - script.carpediem
-      - input_boolean.alarm
+      - input_boolean.sunrise
       - input_boolean.sunset
       - input_boolean.movie_fade
   media:
@@ -134,10 +134,10 @@ group:
 ## INPUTS ##
 ############
 input_boolean:
-  alarm:
+  sunrise:
     name: Sunrise
     icon: mdi:weather-sunset
-    initial: off
+    initial: on
   sunset:
     name: Sunset
     icon: mdi:brightness-4
@@ -234,7 +234,7 @@ script:
         data:
           entity_id: light.Seng
           brightness: 255
-          transition: 65534
+          transition: 6553
 
   sunset:
     alias: Sunset
@@ -335,7 +335,7 @@ automation:
         seconds: 0
     condition:
       - condition: state
-        entity_id: input_boolean.alarm
+        entity_id: input_boolean.sunrise
         state: 'on'
     action:
       service: script.turn_on
