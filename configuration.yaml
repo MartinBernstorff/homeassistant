@@ -179,7 +179,7 @@ script:
         service: light.turn_off
         data:
           entity_id: light.Seng
-      - alias: Initial fade
+      - alias: Red initial
         service: light.turn_on
         data:
           entity_id: light.Corner
@@ -188,16 +188,16 @@ script:
           xy_color: [ 0.674, 0.322 ]
       - delay:
           seconds: 60
-      - alias: Secondary state
+      - alias: Orange intermediary
         service: light.turn_on
         data:
           entity_id: light.Corner
-          brightness: 150
+          brightness: 100
           transition: 60
-          xy_color: [ 0.674, 0.322 ]
+          xy_color: [ 0.5951 , 0.3872 ]
       - delay:
           seconds: 60
-      - alias: End-point
+      - alias: White end-point
         service: light.turn_on
         data:
           entity_id: light.Corner
