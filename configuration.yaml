@@ -188,6 +188,15 @@ script:
           xy_color: [ 0.674, 0.322 ]
       - delay:
           seconds: 60
+      - alias: Secondary state
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 150
+          transition: 60
+          xy_color: [ 0.674, 0.322 ]
+      - delay:
+          seconds: 60
       - alias: End-point
         service: light.turn_on
         data:
@@ -212,7 +221,7 @@ script:
         data:
           entity_id: light.Toilet
           brightness: 255
-          transition: 100
+          transition: 1800
 
   carpeceiling:
     alias: Carpe ceiling
@@ -331,7 +340,7 @@ automation:
     trigger:
       - platform: time
         hours: 6
-        minutes: 0
+        minutes: 30
         seconds: 0
     condition:
       - condition: state
