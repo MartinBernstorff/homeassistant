@@ -8,10 +8,6 @@ homeassistant:
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/Copenhagen
 
-  ###################
-  ## CUSTOMIZATION ##
-  ###################
-
   customize: !include customize.yaml
 
 frontend:
