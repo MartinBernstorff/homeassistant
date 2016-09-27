@@ -1,0 +1,14 @@
+  light_automation:
+    name: Light automation
+    entities:
+      - script.carpediem
+      - input_boolean.sunrise
+      - input_boolean.sunset
+      - input_boolean.movie_fade
+  media:
+    name: Media
+    icon: mdi:movie
+    entities:
+      - input_boolean.mm
+      - switch.benq
+      - media_player.pioneer

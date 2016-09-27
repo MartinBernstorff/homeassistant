@@ -1,0 +1,146 @@
+  ### Setup wake up script ###
+  carpediem:
+    alias: Carpe diem
+    sequence:
+      - alias: Corner
+        service: script.turn_on
+        data:
+          entity_id: script.carpecorner
+      - alias: Toilet
+        service: script.turn_on
+        data:
+          entity_id: script.carpetoilet
+      - alias: Ceiling
+        service: script.turn_on
+        data:
+          entity_id: script.carpeceiling
+
+  carpecorner:
+    alias: Carpe corner
+    sequence:
+      - alias: Kill fake sun
+        service: light.turn_off
+        data:
+          entity_id: light.Seng
+      - alias: Red initial
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 150
+          transition: 60
+          xy_color: [ 0.674, 0.322 ]
+      - delay:
+          seconds: 60
+      - alias: Orange intermediary
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 100
+          transition: 60
+          xy_color: [ 0.5951 , 0.3872 ]
+      - delay:
+          seconds: 60
+      - alias: White end-point
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 255
+          transition: 900
+          xy_color: [ 0.3852, 0.3737 ]
+
+  carpetoilet:
+    alias: Carpe toilet
+    sequence:
+      - alias: Toilet lights on
+        service: light.turn_on
+        data:
+          entity_id: light.Toilet
+          brightness: 50
+          transition: 100
+      - delay:
+          seconds: 100
+      - alias: Secondary fase
+        service: light.turn_on
+        data:
+          entity_id: light.Toilet
+          brightness: 255
+          transition: 1800
+
+  carpeceiling:
+    alias: Carpe ceiling
+    sequence:
+      - delay:
+          seconds: 300
+      - alias: Fade in ceiling light
+        service: light.turn_on
+        data:
+          entity_id: light.loft
+          brightness: 255
+          transition: 900
+
+  sunrise:
+    alias: Wake me up with my fake sun
+    sequence:
+      - alias: Initial fade
+        service: light.turn_on
+        data:
+          entity_id: light.Seng
+          brightness: 255
+          transition: 6553
+
+  sunset:
+    alias: Sunset
+    sequence:
+      - alias: Fade corner out slowly
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 0
+          transition: 3600
+          rgb_color: [ 255, 0, 0 ]
+      - delay:
+          minutes: 60
+      - alias: Turn off corner light
+        service: light.turn_off
+        data:
+          entity_id: light.Corner
+
+  moviemodeon:
+    alias: Moviemode
+    sequence:
+      - alias: Turn on pioneer
+        service: media_player.turn_on
+        data:
+          entity_id: media_player.pioneer
+      - delay:
+          seconds: 10
+      - alias: Turn on projector
+        service: switch.turn_on
+        data:
+          entity_id: switch.benq
+      - alias: Switch to tuner
+        service: media_player.select_source
+        data:
+          entity_id: media_player.pioneer
+          source: TUNER
+      - delay:
+          seconds: 1
+      - alias: Turn up volume
+        service: media_player.volume_set
+        data:
+          entity_id: media_player.pioneer
+          volume_level: 0.8
+      - delay:
+          seconds: 1
+      - alias: Switch to RPI
+        service: media_player.select_source
+        data:
+          entity_id: media_player.pioneer
+          source: RPI
+      - delay:
+          seconds: 1
+      - alias: Turn down volume
+        service: media_player.volume_set
+        data:
+          entity_id: media_player.pioneer
+          volume_level: 0.7

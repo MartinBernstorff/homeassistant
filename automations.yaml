@@ -1,0 +1,78 @@
+  ##Dim on pause/play
+  - alias: "Paused"
+    trigger:
+      - platform: state
+        entity_id: media_player.rasplex
+        from: 'playing'
+    condition:
+      - condition: state
+        entity_id: input_boolean.movie_fade
+        state: 'on'
+    action:
+        service: scene.turn_on
+        entity_id: scene.livingroom_normal
+
+  - alias: "Playing"
+    trigger:
+      - platform: state
+        entity_id: media_player.rasplex
+        to: 'playing'
+    condition:
+      - condition: state
+        entity_id: input_boolean.movie_fade
+        state: 'on'
+    action:
+        service: scene.turn_on
+        entity_id: scene.livingroom_dim
+
+  ##Sunrise
+  - alias: "Sunrise"
+    trigger:
+      - platform: time
+        hours: 6
+        minutes: 30
+        seconds: 0
+    condition:
+      - condition: state
+        entity_id: input_boolean.sunrise
+        state: 'on'
+    action:
+      service: script.turn_on
+      entity_id: script.sunrise
+
+  ##Fade out lights
+  - alias: "Sunset"
+    trigger:
+      - platform: time
+        hours: 20
+        minutes: 30
+        seconds: 0
+    condition:
+      - condition: state
+        entity_id: input_boolean.sunset
+        state: 'on'
+    action:
+      service: script.turn_on
+      entity_id: script.sunset
+
+  #Turn on projector and receiver
+  - alias: "mmOn"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.mm
+        state: 'on'
+    action:
+      service: script.turn_on
+      entity_id: script.moviemodeon
+
+  #Turn off projector and receiver
+  - alias: "mmOff"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.mm
+        state: 'off'
+    action:
+      - service: switch.turn_off
+        entity_id: switch.benq
+      - service: media_player.turn_off
+        entity_id: media_player.pioneer

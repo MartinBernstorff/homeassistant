@@ -1,0 +1,36 @@
+    script.carpediem:
+      icon: mdi:duck
+    switch.benq:
+      icon: mdi:projector
+
+    #HIDE
+    media_player.rasplex:
+      hidden: true
+    scene.livingroom_dim:
+      hidden: true
+    scene.livingroom_normal:
+      hidden: true
+    script.sunrise:
+      hidden: true
+    script.sunset:
+      hidden: true
+    script.carpecorner:
+      hidden: true
+    script.carpeceiling:
+      hidden: true
+    script.carpetoilet:
+      hidden: true
+    script.moviemodeon:
+      hidden: true
+    automation.sunrise:
+      hidden: true
+    automation.paused:
+      hidden: true
+    automation.playing:
+      hidden: true
+    automation.mmOff:
+      hidden: true
+    automation.mmOn:
+      hidden: true
+    automation.sunset:
+      hidden: true

@@ -1,0 +1,6 @@
+  - platform: command_line
+    switches:
+      benq:
+        command_on: "/usr/bin/curl -X GET http://192.168.1.109/benqOn"
+        command_off: "/usr/bin/curl -X GET http://192.168.1.109/benqOff"
+        friendly_name: BenQ

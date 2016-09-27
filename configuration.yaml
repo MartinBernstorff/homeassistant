@@ -12,44 +12,7 @@ homeassistant:
   ## CUSTOMIZATION ##
   ###################
 
-  customize:
-    script.carpediem:
-      icon: mdi:duck
-    switch.benq:
-      icon: mdi:projector
-
-    #HIDE
-    media_player.rasplex:
-      hidden: true
-    scene.livingroom_dim:
-      hidden: true
-    scene.livingroom_normal:
-      hidden: true
-    script.sunrise:
-      hidden: true
-    script.sunset:
-      hidden: true
-    script.carpecorner:
-      hidden: true
-    script.carpeceiling:
-      hidden: true
-    script.carpetoilet:
-      hidden: true
-    script.moviemodeon:
-      hidden: true
-    automation.sunrise:
-      hidden: true
-    automation.paused:
-      hidden: true
-    automation.playing:
-      hidden: true
-    automation.mmOff:
-      hidden: true
-    automation.mmOn:
-      hidden: true
-    automation.sunset:
-      hidden: true
-
+  customize: !include customize.yaml
 
 frontend:
 http:
@@ -68,321 +31,30 @@ logbook:
 # Weather Prediction
   #platform: yr
 
-##################
-## MODULES INIT ##
-##################
-##Setup hue lights
-light:
-  platform: hue
-  host: 192.168.1.108
-  allow_unreachable: true
-
-scene:
-  - name: Livingroom normal
-    entities:
-        light.Corner:
-            state: on
-            transition: 10
-            brightness: 30
-            xy_color: [ 0.4448, 0.4066 ]
-  - name: Livingroom dim
-    entities:
-        light.Corner:
-            state: off
-            transition: 3
-        light.Loft:
-            state: off
-            transition: 3
-
-switch:
-  - platform: command_line
-    switches:
-      benq:
-        command_on: "/usr/bin/curl -X GET http://192.168.1.109/benqOn"
-        command_off: "/usr/bin/curl -X GET http://192.168.1.109/benqOff"
-        friendly_name: BenQ
-
-##Setup media players
-media_player:
-- platform: pioneer
-  host: 192.168.1.106
-  name: pioneer
-- platform: plex
-  name: rasplex
-  scan_interval: 3
-
-############
-## Groups ##
-############
-group:
-  light_automation:
-    name: Light automation
-    entities:
-      - script.carpediem
-      - input_boolean.sunrise
-      - input_boolean.sunset
-      - input_boolean.movie_fade
-  media:
-    name: Media
-    icon: mdi:movie
-    entities:
-      - input_boolean.mm
-      - switch.benq
-      - media_player.pioneer
+#############
+## MODULES ##
+#############
+light: !include lights.yaml
+switch: !include switches.yaml
+media_player: !include media_players.yaml
 
 ############
 ## INPUTS ##
 ############
-input_boolean:
-  sunrise:
-    name: Sunrise
-    icon: mdi:weather-sunset
-    initial: on
-  sunset:
-    name: Sunset
-    icon: mdi:brightness-4
-    initial: off
-  movie_fade:
-    name: Movie fade
-    icon: mdi:spotlight
-    initial: on
-  mm:
-    name: Movie mode
-    icon: mdi:movie
-    initial: off
+input_boolean: !include input_boolean.yaml
+
+########
+## UX ##
+########
+group: !include groups.yaml
+scene: !include scenes.yaml
 
 #############
 ## SCRIPTS ##
 #############
-script:
-  ### Setup wake up script ###
-  carpediem:
-    alias: Carpe diem
-    sequence:
-      - alias: Corner
-        service: script.turn_on
-        data:
-          entity_id: script.carpecorner
-      - alias: Toilet
-        service: script.turn_on
-        data:
-          entity_id: script.carpetoilet
-      - alias: Ceiling
-        service: script.turn_on
-        data:
-          entity_id: script.carpeceiling
+script: !include scripts.yaml
 
-  carpecorner:
-    alias: Carpe corner
-    sequence:
-      - alias: Kill fake sun
-        service: light.turn_off
-        data:
-          entity_id: light.Seng
-      - alias: Red initial
-        service: light.turn_on
-        data:
-          entity_id: light.Corner
-          brightness: 150
-          transition: 60
-          xy_color: [ 0.674, 0.322 ]
-      - delay:
-          seconds: 60
-      - alias: Orange intermediary
-        service: light.turn_on
-        data:
-          entity_id: light.Corner
-          brightness: 100
-          transition: 60
-          xy_color: [ 0.5951 , 0.3872 ]
-      - delay:
-          seconds: 60
-      - alias: White end-point
-        service: light.turn_on
-        data:
-          entity_id: light.Corner
-          brightness: 255
-          transition: 900
-          xy_color: [ 0.3852, 0.3737 ]
-
-  carpetoilet:
-    alias: Carpe toilet
-    sequence:
-      - alias: Toilet lights on
-        service: light.turn_on
-        data:
-          entity_id: light.Toilet
-          brightness: 50
-          transition: 100
-      - delay:
-          seconds: 100
-      - alias: Secondary fase
-        service: light.turn_on
-        data:
-          entity_id: light.Toilet
-          brightness: 255
-          transition: 1800
-
-  carpeceiling:
-    alias: Carpe ceiling
-    sequence:
-      - delay:
-          seconds: 300
-      - alias: Fade in ceiling light
-        service: light.turn_on
-        data:
-          entity_id: light.loft
-          brightness: 255
-          transition: 900
-
-  sunrise:
-    alias: Wake me up with my fake sun
-    sequence:
-      - alias: Initial fade
-        service: light.turn_on
-        data:
-          entity_id: light.Seng
-          brightness: 255
-          transition: 6553
-
-  sunset:
-    alias: Sunset
-    sequence:
-      - alias: Fade corner out slowly
-        service: light.turn_on
-        data:
-          entity_id: light.Corner
-          brightness: 0
-          transition: 3600
-          rgb_color: [ 255, 0, 0 ]
-      - delay:
-          minutes: 60
-      - alias: Turn off corner light
-        service: light.turn_off
-        data:
-          entity_id: light.Corner
-
-  moviemodeon:
-    alias: Moviemode
-    sequence:
-      - alias: Turn on pioneer
-        service: media_player.turn_on
-        data:
-          entity_id: media_player.pioneer
-      - delay:
-          seconds: 10
-      - alias: Turn on projector
-        service: switch.turn_on
-        data:
-          entity_id: switch.benq
-      - alias: Switch to tuner
-        service: media_player.select_source
-        data:
-          entity_id: media_player.pioneer
-          source: TUNER
-      - delay:
-          seconds: 1
-      - alias: Turn up volume
-        service: media_player.volume_set
-        data:
-          entity_id: media_player.pioneer
-          volume_level: 0.8
-      - delay:
-          seconds: 1
-      - alias: Switch to RPI
-        service: media_player.select_source
-        data:
-          entity_id: media_player.pioneer
-          source: RPI
-      - delay:
-          seconds: 1
-      - alias: Turn down volume
-        service: media_player.volume_set
-        data:
-          entity_id: media_player.pioneer
-          volume_level: 0.7
-
-
-
-#################################
-## Setup movie mode automation ##
-#################################
-automation:
-  ##Dim on pause/play
-  - alias: "Paused"
-    trigger:
-      - platform: state
-        entity_id: media_player.rasplex
-        from: 'playing'
-    condition:
-      - condition: state
-        entity_id: input_boolean.movie_fade
-        state: 'on'
-    action:
-        service: scene.turn_on
-        entity_id: scene.livingroom_normal
-
-  - alias: "Playing"
-    trigger:
-      - platform: state
-        entity_id: media_player.rasplex
-        to: 'playing'
-    condition:
-      - condition: state
-        entity_id: input_boolean.movie_fade
-        state: 'on'
-    action:
-        service: scene.turn_on
-        entity_id: scene.livingroom_dim
-
-  ##Sunrise
-  - alias: "Sunrise"
-    trigger:
-      - platform: time
-        hours: 6
-        minutes: 30
-        seconds: 0
-    condition:
-      - condition: state
-        entity_id: input_boolean.sunrise
-        state: 'on'
-    action:
-      service: script.turn_on
-      entity_id: script.sunrise
-
-  ##Fade out lights
-  - alias: "Sunset"
-    trigger:
-      - platform: time
-        hours: 20
-        minutes: 30
-        seconds: 0
-    condition:
-      - condition: state
-        entity_id: input_boolean.sunset
-        state: 'on'
-    action:
-      service: script.turn_on
-      entity_id: script.sunset
-
-  #Turn on projector and receiver
-  - alias: "mmOn"
-    trigger:
-      - platform: state
-        entity_id: input_boolean.mm
-        state: 'on'
-    action:
-      service: script.turn_on
-      entity_id: script.moviemodeon
-
-  #Turn off projector and receiver
-  - alias: "mmOff"
-    trigger:
-      - platform: state
-        entity_id: input_boolean.mm
-        state: 'off'
-    action:
-      - service: switch.turn_off
-        entity_id: switch.benq
-      - service: media_player.turn_off
-        entity_id: media_player.pioneer
+################
+## Automation ##
+################
+automation: !include automations.yaml
