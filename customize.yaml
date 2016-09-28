@@ -6,6 +6,8 @@
     #HIDE
     media_player.rasplex:
       hidden: true
+    media_player.plex_web_safari:
+      hidden: true
     scene.livingroom_dim:
       hidden: true
     scene.livingroom_normal:
