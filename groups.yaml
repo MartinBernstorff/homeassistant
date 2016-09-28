@@ -2,7 +2,7 @@
     name: Light automation
     entities:
       - script.carpediem
-      - input_boolean.sunset
+      - input_boolean.sunrise
       - switch.flux
       - input_boolean.movie_fade
   media:
