@@ -36,3 +36,5 @@
       hidden: true
     automation.sunset:
       hidden: true
+    input_boolean.sunrise:
+      hidden: true

@@ -46,7 +46,7 @@
           entity_id: light.Corner
           brightness: 255
           transition: 900
-          xy_color: [ 0.3852, 0.3737 ]
+          xy_color: [ 0.5614, 0.4156 ]
 
   carpetoilet:
     alias: Carpe toilet
@@ -70,7 +70,7 @@
     alias: Carpe ceiling
     sequence:
       - delay:
-          seconds: 300
+          seconds: 600
       - alias: Fade in ceiling light
         service: light.turn_on
         data:
