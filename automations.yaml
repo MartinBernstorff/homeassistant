@@ -40,21 +40,6 @@
       service: script.turn_on
       entity_id: script.sunrise
 
-  ##Fade out lights
-  - alias: "Sunset"
-    trigger:
-      - platform: time
-        hours: 20
-        minutes: 30
-        seconds: 0
-    condition:
-      - condition: state
-        entity_id: input_boolean.sunset
-        state: 'on'
-    action:
-      service: script.turn_on
-      entity_id: script.sunset
-
   #Turn on projector and receiver
   - alias: "mmOn"
     trigger:

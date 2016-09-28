@@ -2,8 +2,6 @@
       icon: mdi:duck
     switch.benq:
       icon: mdi:projector
-    switch.flux:
-      icon: mdi:weather-sunset
 
     #HIDE
     media_player.rasplex:
@@ -38,7 +36,7 @@
       hidden: true
     automation.sunset:
       hidden: true
-    input_boolean.sunrise:
+    input_boolean.sunset:
       hidden: true
     sun.sun:
       hidden: true
