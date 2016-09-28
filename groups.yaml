@@ -4,6 +4,7 @@
       - script.carpediem
       - input_boolean.sunrise
       - input_boolean.sunset
+      - switch.flux
       - input_boolean.movie_fade
   media:
     name: Media
