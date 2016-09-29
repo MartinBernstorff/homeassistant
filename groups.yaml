@@ -3,7 +3,6 @@
     entities:
       - script.carpediem
       - input_boolean.sunrise
-      - switch.flux
       - input_boolean.movie_fade
   media:
     name: Media

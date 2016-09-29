@@ -4,14 +4,3 @@
         command_on: "/usr/bin/curl -X GET http://192.168.1.109/benqOn"
         command_off: "/usr/bin/curl -X GET http://192.168.1.109/benqOff"
         friendly_name: BenQ
-  - platform: flux
-    lights:
-      - light.Corner
-    name: Flux
-    start_time: '8:00'
-    stop_time: '21:30'
-    start_colortemp: 5000
-    sunset_colortemp: 4000
-    stop_colortemp: 2000
-    brightness: 180
-    mode: xy
