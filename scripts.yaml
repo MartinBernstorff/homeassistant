@@ -40,6 +40,15 @@
           xy_color: [ 0.5951 , 0.3872 ]
       - delay:
           seconds: 60
+      - alias: Bright orange
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 255
+          transition: 300
+          xy_color: [ 0.5951 , 0.3872 ]
+      - delay:
+          seconds: 300
       - alias: White end-point
         service: light.turn_on
         data:
