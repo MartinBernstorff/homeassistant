@@ -3,3 +3,4 @@ plex.conf
 home-assistant_v2.db
 home_assistant.log
 *.log
+*.db
