@@ -4,13 +4,13 @@ You need to edit your config file to use sessions. Here's an example::
 
     [/]
     tools.sessions.on = True
-    tools.sessions.storage_type = "file"
+    tools.sessions.storage_class = cherrypy.lib.sessions.FileSession
     tools.sessions.storage_path = "/home/site/sessions"
     tools.sessions.timeout = 60
 
 This sets the session to be stored in files in the directory
 /home/site/sessions, and the session timeout to 60 minutes. If you omit
-``storage_type`` the sessions will be saved in RAM.
+``storage_class``, the sessions will be saved in RAM.
 ``tools.sessions.on`` is the only required line for working sessions,
 the rest are optional.
 
@@ -94,8 +94,6 @@ import datetime
 import os
 import time
 import threading
-
-import six
 
 import cherrypy
 from cherrypy._cpcompat import copyitems, pickle, random20
@@ -475,6 +473,7 @@ class FileSession(Session):
             raise ValueError("Lock timeout must be numeric seconds or "
                 "a timedelta instance.")
 
+    @classmethod
     def setup(cls, **kwargs):
         """Set up the storage system for file-based sessions.
 
@@ -486,7 +485,6 @@ class FileSession(Session):
 
         for k, v in kwargs.items():
             setattr(cls, k, v)
-    setup = classmethod(setup)
 
     def _get_file_path(self):
         f = os.path.join(self.storage_path, self.SESSION_PREFIX + self.id)
@@ -603,6 +601,7 @@ class MemcachedSession(Session):
 
     servers = ['127.0.0.1:11211']
 
+    @classmethod
     def setup(cls, **kwargs):
         """Set up the storage system for memcached-based sessions.
 
@@ -614,21 +613,6 @@ class MemcachedSession(Session):
 
         import memcache
         cls.cache = memcache.Client(cls.servers)
-    setup = classmethod(setup)
-
-    def _get_id(self):
-        return self._id
-
-    def _set_id(self, value):
-        # This encode() call is where we differ from the superclass.
-        # Memcache keys MUST be byte strings, not unicode.
-        if isinstance(value, six.text_type):
-            value = value.encode('utf-8')
-
-        self._id = value
-        for o in self.id_observers:
-            o(value)
-    id = property(_get_id, _set_id, doc="The current session ID.")
 
     def _exists(self):
         self.mc_lock.acquire()
@@ -715,12 +699,19 @@ close.failsafe = True
 close.priority = 90
 
 
-def init(storage_type='ram', path=None, path_header=None, name='session_id',
+def init(storage_type=None, path=None, path_header=None, name='session_id',
          timeout=60, domain=None, secure=False, clean_freq=5,
-         persistent=True, httponly=False, debug=False, **kwargs):
+         persistent=True, httponly=False, debug=False,
+         # Py27 compat
+         # *, storage_class=RamSession,
+         **kwargs):
     """Initialize session object (using cookies).
 
+    storage_class
+        The Session subclass to use. Defaults to RamSession.
+
     storage_type
+        (deprecated)
         One of 'ram', 'file', memcached'. This will be
         used to look up the corresponding class in cherrypy.lib.sessions
         globals. For example, 'file' will use the FileSession class.
@@ -765,6 +756,9 @@ def init(storage_type='ram', path=None, path_header=None, name='session_id',
     you're using for more information.
     """
 
+    # Py27 compat
+    storage_class = kwargs.pop('storage_class', RamSession)
+
     request = cherrypy.serving.request
 
     # Guard against running twice
@@ -780,10 +774,17 @@ def init(storage_type='ram', path=None, path_header=None, name='session_id',
             cherrypy.log('ID obtained from request.cookie: %r' % id,
                          'TOOLS.SESSIONS')
 
-    # Find the storage class and call setup (first time only).
-    storage_class = storage_type.title() + 'Session'
-    storage_class = globals()[storage_class]
-    if not hasattr(cherrypy, "session"):
+    first_time = not hasattr(cherrypy, "session")
+
+    if storage_type:
+        if first_time:
+            msg = "storage_type is deprecated. Supply storage_class instead"
+            cherrypy.log(msg)
+        storage_class = storage_type.title() + 'Session'
+        storage_class = globals()[storage_class]
+
+    # call setup first time only
+    if first_time:
         if hasattr(storage_class, "setup"):
             storage_class.setup(**kwargs)
 

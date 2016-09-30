@@ -1,10 +1,7 @@
 """Tests for the CherryPy configuration system."""
 
 import os
-import sys
 localDir = os.path.join(os.getcwd(), os.path.dirname(__file__))
-import socket
-import time
 
 import cherrypy
 
@@ -16,6 +13,7 @@ from cherrypy.test import helper
 
 class ServerConfigTests(helper.CPWebCase):
 
+    @staticmethod
     def setup_server():
 
         class Root:
@@ -50,7 +48,6 @@ class ServerConfigTests(helper.CPWebCase):
             # Also test default server.instance = builtin server
             'server.yetanother.socket_port': 9878,
         })
-    setup_server = staticmethod(setup_server)
 
     PORT = 9876
 

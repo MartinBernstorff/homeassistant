@@ -1,12 +1,9 @@
 import datetime
-import gzip
 from itertools import count
 import os
 curdir = os.path.join(os.getcwd(), os.path.dirname(__file__))
-import sys
 import threading
 import time
-import urllib
 
 import cherrypy
 from cherrypy._cpcompat import next, ntob, quote, xrange
@@ -24,6 +21,7 @@ from cherrypy.test import helper
 
 class CacheTest(helper.CPWebCase):
 
+    @staticmethod
     def setup_server():
 
         @cherrypy.config(**{'tools.caching.on': True})
@@ -129,7 +127,6 @@ class CacheTest(helper.CPWebCase):
         cherrypy.tree.mount(UnCached(), "/expires")
         cherrypy.tree.mount(VaryHeaderCachingServer(), "/varying_headers")
         cherrypy.config.update({'tools.gzip.on': True})
-    setup_server = staticmethod(setup_server)
 
     def testCaching(self):
         elapsed = 0.0
@@ -293,19 +290,19 @@ class CacheTest(helper.CPWebCase):
 
     def test_antistampede(self):
         SECONDS = 4
+        slow_url = "/long_process?seconds={SECONDS}".format(**locals())
         # We MUST make an initial synchronous request in order to create the
         # AntiStampedeCache object, and populate its selecting_headers,
         # before the actual stampede.
-        self.getPage("/long_process?seconds=%d" % SECONDS)
+        self.getPage(slow_url)
         self.assertBody('success!')
-        self.getPage("/clear_cache?path=" +
-                     quote('/long_process?seconds=%d' % SECONDS, safe=''))
+        self.getPage("/clear_cache?path=" + quote(slow_url, safe=''))
         self.assertStatus(200)
 
         start = datetime.datetime.now()
 
         def run():
-            self.getPage("/long_process?seconds=%d" % SECONDS)
+            self.getPage(slow_url)
             # The response should be the same every time
             self.assertBody('success!')
         ts = [threading.Thread(target=run) for i in xrange(100)]
@@ -313,10 +310,10 @@ class CacheTest(helper.CPWebCase):
             t.start()
         for t in ts:
             t.join()
-        self.assertEqualDates(start, datetime.datetime.now(),
-                              # Allow a second (two, for slow hosts)
-                              # for our thread/TCP overhead etc.
-                              seconds=SECONDS + 2)
+        finish = datetime.datetime.now()
+        # Allow for overhead, two seconds for slow hosts
+        allowance = SECONDS + 2
+        self.assertEqualDates(start, finish, seconds=allowance)
 
     def test_cache_control(self):
         self.getPage("/control")

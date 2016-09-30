@@ -2,11 +2,12 @@
 import os
 import sys
 import io
+import contextlib
 
 from six.moves import urllib
 
 from cherrypy._cpcompat import (
-    HTTPConnection, HTTPSConnection, ntob, ntou, tonative,
+    HTTPConnection, HTTPSConnection, ntou, tonative,
 )
 
 curdir = os.path.join(os.getcwd(), os.path.dirname(__file__))
@@ -16,7 +17,8 @@ bigfile_filepath = os.path.join(curdir, "static", "bigfile.log")
 # The file size needs to be big enough such that half the size of it
 # won't be socket-buffered (or server-buffered) all in one go. See
 # test_file_stream.
-BIGFILE_SIZE = 1024 * 1024 * 20
+MB = 2 ** 20
+BIGFILE_SIZE = 32 * MB
 
 import cherrypy
 from cherrypy.lib import static
@@ -28,10 +30,15 @@ class StaticTest(helper.CPWebCase):
     @staticmethod
     def setup_server():
         if not os.path.exists(has_space_filepath):
-            open(has_space_filepath, 'wb').write(ntob('Hello, world\r\n'))
-        if not os.path.exists(bigfile_filepath) or \
-            os.path.getsize(bigfile_filepath) != BIGFILE_SIZE:
-            open(bigfile_filepath, 'wb').write(ntob("x" * BIGFILE_SIZE))
+            with open(has_space_filepath, 'wb') as f:
+                f.write(b'Hello, world\r\n')
+        needs_bigfile = (
+            not os.path.exists(bigfile_filepath)
+            or os.path.getsize(bigfile_filepath) != BIGFILE_SIZE
+        )
+        if needs_bigfile:
+            with open(bigfile_filepath, 'wb') as f:
+                f.write(b"x" * BIGFILE_SIZE)
 
         class Root:
 
@@ -55,7 +62,7 @@ class StaticTest(helper.CPWebCase):
 
             @cherrypy.expose
             def bytesio(self):
-                f = io.BytesIO(ntob('Fee\nfie\nfo\nfum'))
+                f = io.BytesIO(b'Fee\nfie\nfo\nfum')
                 return static.serve_fileobj(f, content_type='text/plain')
 
         class Static:
@@ -180,12 +187,16 @@ class StaticTest(helper.CPWebCase):
         self.getPage("/error/thing.html")
         self.assertErrorPage(500)
         if sys.version_info >= (3, 3):
-            errmsg = ntob("TypeError: staticdir\(\) missing 2 "
-                          "required positional arguments")
+            errmsg = (
+                "TypeError: staticdir\(\) missing 2 "
+                "required positional arguments"
+            )
         else:
-            errmsg = ntob("TypeError: staticdir\(\) takes at least 2 "
-                          "(positional )?arguments \(0 given\)")
-        self.assertMatchesBody(errmsg)
+            errmsg = (
+                "TypeError: staticdir\(\) takes at least 2 "
+                "(positional )?arguments \(0 given\)"
+            )
+        self.assertMatchesBody(errmsg.encode('ascii'))
 
     def test_security(self):
         # Test up-level security
@@ -244,7 +255,7 @@ class StaticTest(helper.CPWebCase):
         response.begin()
         self.assertEqual(response.status, 200)
 
-        body = ntob('')
+        body = b''
         remaining = BIGFILE_SIZE
         while remaining > 0:
             data = response.fp.read(65536)
@@ -258,7 +269,7 @@ class StaticTest(helper.CPWebCase):
             else:
                 newconn = HTTPConnection
             s, h, b = helper.webtest.openURL(
-                ntob("/tell"), headers=[], host=self.HOST, port=self.PORT,
+                b"/tell", headers=[], host=self.HOST, port=self.PORT,
                 http_conn=newconn)
             if not b:
                 # The file was closed on the server.
@@ -284,7 +295,7 @@ class StaticTest(helper.CPWebCase):
             #
             # At the time of writing, we seem to have encountered
             # buffer sizes bigger than 512K, so we've increased
-            # BIGFILE_SIZE to 4MB and in 2016 to 20MB.
+            # BIGFILE_SIZE to 4MB and in 2016 to 20MB and then 32MB.
             # This test is going to keep failing according to the
             # improvements in hardware and OS buffers.
             if tell_position >= BIGFILE_SIZE:
@@ -301,7 +312,7 @@ class StaticTest(helper.CPWebCase):
                     "as intended, or at the wrong chunk size (64k)" %
                     (read_so_far, tell_position))
 
-        if body != ntob("x" * BIGFILE_SIZE):
+        if body != b"x" * BIGFILE_SIZE:
             self.fail("Body != 'x' * %d. Got %r instead (%d bytes)." %
                       (BIGFILE_SIZE, body[:50], len(body)))
         conn.close()
@@ -322,7 +333,7 @@ class StaticTest(helper.CPWebCase):
         response.begin()
         self.assertEqual(response.status, 200)
         body = response.fp.read(65536)
-        if body != ntob("x" * len(body)):
+        if body != b"x" * len(body):
             self.fail("Body != 'x' * %d. Got %r instead (%d bytes)." %
                       (65536, body[:50], len(body)))
         response.close()
@@ -331,7 +342,7 @@ class StaticTest(helper.CPWebCase):
         # Make a second request, which should fetch the whole file.
         self.persistent = False
         self.getPage("/bigfile")
-        if self.body != ntob("x" * BIGFILE_SIZE):
+        if self.body != b"x" * BIGFILE_SIZE:
             self.fail("Body != 'x' * %d. Got %r instead (%d bytes)." %
                       (BIGFILE_SIZE, self.body[:50], len(body)))
 
@@ -344,18 +355,30 @@ class StaticTest(helper.CPWebCase):
         self.getPage("/static/\x00")
         self.assertStatus('404 Not Found')
 
-    def test_unicode(self):
-        url = ntou("/static/Слава Україні.html", 'utf-8')
-        # quote function requires str
-        url = tonative(url, 'utf-8')
-        url = urllib.parse.quote(url)
-        self.getPage(url)
+    @staticmethod
+    @contextlib.contextmanager
+    def unicode_file():
+        filename = ntou("Слава Україні.html", 'utf-8')
+        filepath = os.path.join(curdir, "static", filename)
+        with io.open(filepath, 'w', encoding='utf-8') as strm:
+            strm.write(ntou("Героям Слава!", 'utf-8'))
+        try:
+            yield
+        finally:
+            os.remove(filepath)
 
-        expected = ntou("Героям Слава!", 'utf-8')
-        self.assertInBody(expected)
+    def test_unicode(self):
+        with self.unicode_file():
+            url = ntou("/static/Слава Україні.html", 'utf-8')
+            # quote function requires str
+            url = tonative(url, 'utf-8')
+            url = urllib.parse.quote(url)
+            self.getPage(url)
+
+            expected = ntou("Героям Слава!", 'utf-8')
+            self.assertInBody(expected)
 
 
 def error_page_404(status, message, traceback, version):
-    import os.path
-    return static.serve_file(os.path.join(curdir, 'static', '404.html'),
-        content_type='text/html')
+    path = os.path.join(curdir, 'static', '404.html')
+    return static.serve_file(path, content_type='text/html')

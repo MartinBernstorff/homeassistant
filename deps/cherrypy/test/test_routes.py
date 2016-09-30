@@ -9,10 +9,11 @@ import nose
 
 class RoutesDispatchTest(helper.CPWebCase):
 
+    @staticmethod
     def setup_server():
 
         try:
-            import routes
+            import routes  # noqa
         except ImportError:
             raise nose.SkipTest('Install routes to test RoutesDispatcher code')
 
@@ -52,7 +53,6 @@ class RoutesDispatchTest(helper.CPWebCase):
 
         conf = {'/': {'request.dispatch': d}}
         cherrypy.tree.mount(root=None, config=conf)
-    setup_server = staticmethod(setup_server)
 
     def test_Routes_Dispatch(self):
         self.getPage("/hounslow")

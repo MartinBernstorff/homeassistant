@@ -99,6 +99,7 @@ import errno
 import logging
 
 import six
+from six.moves import filter
 
 try:
     # prefer slower Python-based io module
@@ -1426,6 +1427,8 @@ class HTTPConnection(object):
                         except FatalSSLAlert:
                             # Close the connection.
                             return
+                        except NoSSLError:
+                            self._handle_no_ssl()
             elif errnum not in socket_errors_to_ignore:
                 self.server.error_log("socket.error %s" % repr(errnum),
                                       level=logging.WARNING, traceback=True)
@@ -1435,6 +1438,8 @@ class HTTPConnection(object):
                     except FatalSSLAlert:
                         # Close the connection.
                         return
+                    except NoSSLError:
+                        self._handle_no_ssl()
             return
         except (KeyboardInterrupt, SystemExit):
             raise
@@ -1442,15 +1447,7 @@ class HTTPConnection(object):
             # Close the connection.
             return
         except NoSSLError:
-            if req and not req.sent_headers:
-                # Unwrap our wfile
-                self.wfile = CP_makefile(
-                    self.socket._sock, "wb", self.wbufsize)
-                req.simple_response(
-                    "400 Bad Request",
-                    "The client sent a plain HTTP request, but "
-                    "this server only speaks HTTPS on this port.")
-                self.linger = True
+            self._handle_no_ssl(req)
         except Exception:
             e = sys.exc_info()[1]
             self.server.error_log(repr(e), level=logging.ERROR, traceback=True)
@@ -1462,6 +1459,18 @@ class HTTPConnection(object):
                     return
 
     linger = False
+
+    def _handle_no_ssl(self, req):
+        if not req or req.sent_headers:
+            return
+        # Unwrap wfile
+        self.wfile = CP_makefile(self.socket._sock, "wb", self.wbufsize)
+        msg = (
+            "The client sent a plain HTTP request, but "
+            "this server only speaks HTTPS on this port."
+        )
+        req.simple_response("400 Bad Request", msg)
+        self.linger = True
 
     def close(self):
         """Close the socket underlying this connection."""
@@ -2307,25 +2316,32 @@ class WSGIGateway(Gateway):
 
     def respond(self):
         """Process the current request."""
+
+        """
+        From PEP 333:
+
+            The start_response callable must not actually transmit
+            the response headers. Instead, it must store them for the
+            server or gateway to transmit only after the first
+            iteration of the application return value that yields
+            a NON-EMPTY string, or upon the application's first
+            invocation of the write() callable.
+        """
+
         response = self.req.server.wsgi_app(self.env, self.start_response)
         try:
-            for chunk in response:
-                # "The start_response callable must not actually transmit
-                # the response headers. Instead, it must store them for the
-                # server or gateway to transmit only after the first
-                # iteration of the application return value that yields
-                # a NON-EMPTY string, or upon the application's first
-                # invocation of the write() callable." (PEP 333)
-                if chunk:
-                    if isinstance(chunk, six.text_type):
-                        chunk = chunk.encode('ISO-8859-1')
-                    self.write(chunk)
+            for chunk in filter(None, response):
+                if not isinstance(chunk, six.binary_type):
+                    raise ValueError("WSGI Applications must yield bytes")
+                self.write(chunk)
         finally:
             if hasattr(response, "close"):
                 response.close()
 
     def start_response(self, status, headers, exc_info=None):
-        """WSGI callable to begin the HTTP response."""
+        """
+        WSGI callable to begin the HTTP response.
+        """
         # "The application may call start_response more than once,
         # if and only if the exc_info argument is provided."
         if self.started_response and not exc_info:

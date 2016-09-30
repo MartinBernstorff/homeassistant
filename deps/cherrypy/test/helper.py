@@ -12,6 +12,8 @@ import re
 import sys
 import time
 import warnings
+import io
+import six
 
 import cherrypy
 from cherrypy._cpcompat import text_or_bytes, copyitems, HTTPSConnection, ntob
@@ -40,7 +42,6 @@ def get_tst_config(overconf={}):
             'port': 54583,
             'host': '127.0.0.1',
             'validate': False,
-            'conquer': False,
             'server': 'wsgi',
         }
         try:
@@ -163,15 +164,6 @@ class LocalWSGISupervisor(LocalSupervisor):
         if app is None:
             app = cherrypy.tree
 
-        if self.conquer:
-            try:
-                import wsgiconq
-            except ImportError:
-                warnings.warn(
-                    "Error importing wsgiconq. pyconquer will not run.")
-            else:
-                app = wsgiconq.WSGILogger(app, c_calls=True)
-
         if self.validate:
             try:
                 from wsgiref import validate
@@ -236,6 +228,7 @@ class CPWebCase(webtest.WebCase):
                          }
     default_server = "wsgi"
 
+    @classmethod
     def _setup_server(cls, supervisor, conf):
         v = sys.version.split()[0]
         log.info("Python version used to run this test script: %s" % v)
@@ -278,8 +271,8 @@ class CPWebCase(webtest.WebCase):
         if supervisor.scheme == "https":
             webtest.WebCase.HTTP_CONN = HTTPSConnection
         return baseconf
-    _setup_server = classmethod(_setup_server)
 
+    @classmethod
     def setup_class(cls):
         ''
         # Creates a server
@@ -309,13 +302,12 @@ class CPWebCase(webtest.WebCase):
             supervisor.start(cls.__module__)
 
         cls.supervisor = supervisor
-    setup_class = classmethod(setup_class)
 
+    @classmethod
     def teardown_class(cls):
         ''
         if hasattr(cls, 'setup_server'):
             cls.supervisor.stop()
-    teardown_class = classmethod(teardown_class)
 
     do_gc_test = False
 
@@ -480,9 +472,8 @@ server.ssl_private_key: r'%s'
             'ssl': ssl,
             'extra': extra,
         }
-        f = open(self.config_file, 'wb')
-        f.write(ntob(conf, 'utf-8'))
-        f.close()
+        with io.open(self.config_file, 'w', encoding='utf-8') as f:
+            f.write(six.text_type(conf))
 
     def start(self, imports=None):
         """Start cherryd in a subprocess."""

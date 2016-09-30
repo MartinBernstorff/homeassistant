@@ -46,6 +46,7 @@ class HTTPTests(helper.CPWebCase):
         else:
             return HTTPConnection('%s:%s' % (self.interface(), self.PORT))
 
+    @staticmethod
     def setup_server():
         class Root:
 
@@ -90,7 +91,6 @@ class HTTPTests(helper.CPWebCase):
 
         cherrypy.tree.mount(Root())
         cherrypy.config.update({'server.max_request_body_size': 30000000})
-    setup_server = staticmethod(setup_server)
 
     def test_no_content_length(self):
         # "The presence of a message-body in a request is signaled by the
@@ -115,11 +115,13 @@ class HTTPTests(helper.CPWebCase):
             c = HTTPSConnection('%s:%s' % (self.interface(), self.PORT))
         else:
             c = HTTPConnection('%s:%s' % (self.interface(), self.PORT))
-        if hasattr(c, '_set_content_length'): # python 2.6 doesn't have it
-            with patch.object(c, '_set_content_length'):
+
+        # `_get_content_length` is needed for Python 3.6+
+        with patch.object(c, '_get_content_length', lambda body, method: None, create=True):
+            # `_set_content_length` is needed for Python 2.7-3.5
+            with patch.object(c, '_set_content_length', create=True):
                 c.request("POST", "/")
-        else:
-            c.request("POST", "/")
+
         response = c.getresponse()
         self.body = response.fp.read()
         self.status = str(response.status)
@@ -196,7 +198,11 @@ class HTTPTests(helper.CPWebCase):
         c.close()
 
     def test_request_line_split_issue_1220(self):
-        Request_URI = "/index?intervenant-entreprise-evenement_classaction=evenement-mailremerciements&_path=intervenant-entreprise-evenement&intervenant-entreprise-evenement_action-id=19404&intervenant-entreprise-evenement_id=19404&intervenant-entreprise_id=28092"
+        Request_URI = (
+            '/index?intervenant-entreprise-evenement_classaction=evenement-mailremerciements'
+            '&_path=intervenant-entreprise-evenement&intervenant-entreprise-evenement_action-id=19404'
+            '&intervenant-entreprise-evenement_id=19404&intervenant-entreprise_id=28092'
+        )
         self.assertEqual(len("GET %s HTTP/1.1\r\n" % Request_URI), 256)
         self.getPage(Request_URI)
         self.assertBody("Hello world!")

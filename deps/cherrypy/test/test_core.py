@@ -8,7 +8,7 @@ import sys
 import types
 
 import cherrypy
-from cherrypy._cpcompat import IncompleteRead, itervalues, ntob, ntou
+from cherrypy._cpcompat import itervalues, ntob, ntou
 from cherrypy import _cptools, tools
 from cherrypy.lib import httputil, static
 from cherrypy.test._test_decorators import ExposeExamples
@@ -23,6 +23,7 @@ from cherrypy.test import helper
 
 class CoreRequestHandlingTest(helper.CPWebCase):
 
+    @staticmethod
     def setup_server():
         class Root:
 
@@ -278,7 +279,6 @@ class CoreRequestHandlingTest(helper.CPWebCase):
                     'WWW-Authenticate'] = 'Negotiate,Basic realm="foo"'
 
         cherrypy.tree.mount(root)
-    setup_server = staticmethod(setup_server)
 
     def testStatus(self):
         self.getPage("/status/")
@@ -720,6 +720,7 @@ class CoreRequestHandlingTest(helper.CPWebCase):
 
 class ErrorTests(helper.CPWebCase):
 
+    @staticmethod
     def setup_server():
         def break_header():
             # Add a header after finalize that is invalid
@@ -736,13 +737,23 @@ class ErrorTests(helper.CPWebCase):
             @cherrypy.config(**{'tools.break_header.on': True})
             def start_response_error(self):
                 return "salud!"
+
+            @cherrypy.expose
+            def stat(self, path):
+                with cherrypy.HTTPError.handle(OSError, 404):
+                    st = os.stat(path)
+
         root = Root()
 
         cherrypy.tree.mount(root)
-    setup_server = staticmethod(setup_server)
 
     def test_start_response_error(self):
         self.getPage("/start_response_error")
         self.assertStatus(500)
         self.assertInBody(
             "TypeError: response.header_list key 2 is not a byte string.")
+
+    def test_contextmanager(self):
+        self.getPage("/stat/missing")
+        self.assertStatus(404)
+        self.assertInBody("No such file or directory")
