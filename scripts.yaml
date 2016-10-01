@@ -46,7 +46,7 @@
           entity_id: light.Corner
           brightness: 255
           transition: 300
-          xy_color: [ 0.3436, 0.3612]
+          xy_color: [ 0.5268, 0.4133 ]
       - delay:
           seconds: 300
       - alias: White end-point
@@ -106,7 +106,7 @@
           entity_id: light.Corner
           brightness: 255
           transition: 10
-          xy_color: [ 0.3806, 0.3576]
+          xy_color: [ 0.5268, 0.4133 ]
       - delay:
           seconds: 10
       - alias: Fade corner out slowly to orange
