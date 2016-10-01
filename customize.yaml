@@ -35,7 +35,7 @@
     automation.mmOn:
       hidden: true
     automation.sunset:
-      hidden: false
+      hidden: true
     input_boolean.sunset:
       hidden: false
     sun.sun:
