@@ -100,6 +100,15 @@
   sunset:
     alias: Sunset
     sequence:
+      - alias: Bright orange
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 255
+          transition: 10
+          xy_color: [ 0.3436, 0.3612]
+      - delay:
+          seconds: 10
       - alias: Fade corner out slowly to orange
         service: light.turn_on
         data:
@@ -114,8 +123,18 @@
         data:
           entity_id: light.Corner
           brightness: 50
-          transition: 3600
+          transition: 1
           xy_color: [ 0.674, 0.322 ]
+      - delay:
+          minutes: 60
+      - alias: Turn off corner
+        service: light.turn_on
+        data:
+          entity_id: light.Corner
+          brightness: 0
+          transition: 1
+          xy_color: [ 0.674, 0.322 ]
+
 
   moviemodeon:
     alias: Moviemode
