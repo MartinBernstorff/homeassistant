@@ -46,7 +46,7 @@
           entity_id: light.Corner
           brightness: 255
           transition: 300
-          xy_color: [ 0.5951 , 0.3872 ]
+          xy_color: [ 0.3436, 0.3612]
       - delay:
           seconds: 300
       - alias: White end-point
