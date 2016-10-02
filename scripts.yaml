@@ -35,27 +35,27 @@
         service: light.turn_on
         data:
           entity_id: light.Corner
-          brightness: 100
-          transition: 60
-          xy_color: [ 0.3806, 0.3576]
+          brightness: 120
+          transition: 120
+          xy_color: [ 0.5268, 0.4133 ]
       - delay:
-          seconds: 60
+          seconds: 120
       - alias: Bright orange
         service: light.turn_on
         data:
           entity_id: light.Corner
           brightness: 255
-          transition: 300
-          xy_color: [ 0.5268, 0.4133 ]
+          transition: 1920
+          xy_color: [ 0.3664, 0.3675 ]
       - delay:
-          seconds: 300
-      - alias: White end-point
+          seconds: 1920
+      - alias: Pure white
         service: light.turn_on
         data:
           entity_id: light.Corner
           brightness: 255
-          transition: 900
-          xy_color: [ 0.5614, 0.4156 ]
+          transition: 1800
+          xy_color: [ 0.3806, 0.358 ]
 
   carpetoilet:
     alias: Carpe toilet
