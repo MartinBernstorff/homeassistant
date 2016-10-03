@@ -116,25 +116,6 @@
           brightness: 50
           transition: 3600
           xy_color: [ 0.5951, 0.3872 ]
-      - delay:
-          minutes: 60
-      - alias: Make corner red
-        service: light.turn_on
-        data:
-          entity_id: light.Corner
-          brightness: 50
-          transition: 1
-          xy_color: [ 0.674, 0.322 ]
-      - delay:
-          minutes: 60
-      - alias: Turn off corner
-        service: light.turn_on
-        data:
-          entity_id: light.Corner
-          brightness: 0
-          transition: 1
-          xy_color: [ 0.674, 0.322 ]
-
 
   moviemodeon:
     alias: Moviemode
