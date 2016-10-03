@@ -45,7 +45,7 @@
         data:
           entity_id: light.Corner
           brightness: 255
-          transition: 1920
+          transition: 720
           xy_color: [ 0.3664, 0.3675 ]
       - delay:
           seconds: 1920
