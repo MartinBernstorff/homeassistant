@@ -123,7 +123,7 @@
           entity_id: media_player.pioneer
           volume_level: 0.8
       - delay:
-          seconds: 1
+          seconds: 3
       - alias: Switch to RPI
         service: media_player.select_source
         data:
