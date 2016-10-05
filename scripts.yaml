@@ -110,6 +110,8 @@
         service: switch.turn_on
         data:
           entity_id: switch.benq
+      - delay:
+          seconds: 8
       - alias: Switch to tuner
         service: media_player.select_source
         data:
@@ -123,7 +125,7 @@
           entity_id: media_player.pioneer
           volume_level: 0.8
       - delay:
-          seconds: 3
+          seconds: 5
       - alias: Switch to RPI
         service: media_player.select_source
         data:
