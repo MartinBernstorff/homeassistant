@@ -2,10 +2,6 @@
     name: Sunrise
     icon: mdi:weather-sunset
     initial: off
-  sunset:
-    name: Sunset
-    icon: mdi:weather-sunset-down
-    initial: off
   movie_fade:
     name: Movie fade
     icon: mdi:spotlight
