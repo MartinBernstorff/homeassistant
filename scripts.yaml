@@ -79,13 +79,13 @@
     alias: Carpe ceiling
     sequence:
       - delay:
-          seconds: 600
+          seconds: 480
       - alias: Fade in ceiling light
         service: light.turn_on
         data:
           entity_id: light.loft
           brightness: 255
-          transition: 900
+          transition: 300
 
   sunrise:
     alias: Wake me up with my fake sun
