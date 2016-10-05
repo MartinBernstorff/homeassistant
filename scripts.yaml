@@ -46,7 +46,7 @@
           entity_id: light.Corner
           brightness: 255
           transition: 720
-          xy_color: [ 0.3664, 0.3675 ]
+          xy_color: [ 0.4255, 0.3998 ]
       - delay:
           seconds: 1920
       - alias: Pure white
