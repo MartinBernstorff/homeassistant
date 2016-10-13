@@ -73,7 +73,7 @@
         data:
           entity_id: light.Toilet
           brightness: 255
-          transition: 1800
+          transition: 1560
 
   carpeceiling:
     alias: Carpe ceiling
