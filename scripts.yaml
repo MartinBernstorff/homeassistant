@@ -55,7 +55,7 @@
           entity_id: light.Corner
           brightness: 255
           transition: 3
-          xy_color: [ 0.2975, 0.2979 ]
+          xy_color: [0.3138, 0.3238]
 
   carpetoilet:
     alias: Carpe toilet
