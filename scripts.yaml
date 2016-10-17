@@ -95,9 +95,10 @@
       - alias: Initial fade
         service: light.turn_on
         data:
-          entity_id: light.Seng
+          entity_id: light.monitor
           brightness: 255
           transition: 6553
+          xy_color: [ 0.4255, 0.3998 ]
 
   moviemodeon:
     alias: Moviemode
