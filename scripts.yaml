@@ -92,6 +92,13 @@
   sunrise:
     alias: Wake me up with my fake sun
     sequence:
+      - alias: Red initial
+        service: light.turn_on
+        data:
+          entity_id: light.monitor
+          brightness: 25
+          transition: 900
+          xy_color: [ 0.674, 0.322 ]
       - alias: Initial fade
         service: light.turn_on
         data:
