@@ -14,6 +14,10 @@
         service: script.turn_on
         data:
           entity_id: script.carpeceiling
+      - alias: Sunrise
+        service: script.turn_off
+        data:
+          entity_id: script.carpecorner
 
   carpecorner:
     alias: Carpe corner
@@ -96,9 +100,11 @@
         service: light.turn_on
         data:
           entity_id: light.monitor
-          brightness: 25
-          transition: 900
+          brightness: 1
+          transition: 0
           xy_color: [ 0.674, 0.322 ]
+      - delay:
+          seconds: 600
       - alias: Initial fade
         service: light.turn_on
         data:
