@@ -14,6 +14,10 @@
         service: script.turn_on
         data:
           entity_id: script.carpeceiling
+      - alias: Carpe reol
+        service: script.turn_on
+        data:
+          entity_id: script.carpereol
       - alias: Sunrise
         service: script.turn_off
         data:
@@ -100,6 +104,18 @@
         data:
           entity_id: light.loft
           brightness: 255
+          transition: 300
+
+  carpereol:
+    alias: Carpe reol
+    sequence:
+      - delay:
+          seconds: 300
+      - alias: Fade in moode light
+        service: light.turn_on
+        data:
+          entity_id: light.loft
+          brightness: 150
           transition: 300
 
   sunrise:
