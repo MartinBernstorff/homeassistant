@@ -3,7 +3,7 @@
     trigger:
       - platform: time
         hours: 6
-        minutes: 15
+        minutes: 25
         seconds: 0
     condition:
       - condition: state
