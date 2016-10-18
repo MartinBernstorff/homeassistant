@@ -52,18 +52,9 @@
         service: light.turn_on
         data:
           entity_id: light.monitor
-          brightness: 255
+          brightness: 204
           transition: 720
           xy_color: [ 0.4255, 0.3998 ]
-      - delay:
-          seconds: 1920
-      - alias: Pure white
-        service: light.turn_on
-        data:
-          entity_id: light.monitor
-          brightness: 255
-          transition: 3
-          xy_color: [0.3138, 0.3238]
 
   carpetoilet:
     alias: Carpe toilet
@@ -103,7 +94,7 @@
         service: light.turn_on
         data:
           entity_id: light.loft
-          brightness: 255
+          brightness: 204
           transition: 300
 
   carpereol:
@@ -115,7 +106,7 @@
         service: light.turn_on
         data:
           entity_id: light.loft
-          brightness: 150
+          brightness: 120
           transition: 300
 
   sunrise:
