@@ -64,21 +64,30 @@
   carpetoilet:
     alias: Carpe toilet
     sequence:
-      - alias: Toilet lights on
+      - alias: Red initial
         service: light.turn_on
         data:
-          entity_id: light.bathroom
-          brightness: 50
-          transition: 100
+          entity_id: light.toilet
+          brightness: 150
+          transition: 60
           xy_color: [ 0.674, 0.322 ]
       - delay:
-          seconds: 100
-      - alias: Secondary fase
+          seconds: 60
+      - alias: Orange intermediary
         service: light.turn_on
         data:
-          entity_id: light.bathroom
+          entity_id: light.toilet
+          brightness: 120
+          transition: 120
+          xy_color: [ 0.5268, 0.4133 ]
+      - delay:
+          seconds: 120
+      - alias: Bright orange
+        service: light.turn_on
+        data:
+          entity_id: light.toilet
           brightness: 255
-          transition: 1560
+          transition: 720
           xy_color: [ 0.4255, 0.3998 ]
 
   carpeceiling:
