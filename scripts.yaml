@@ -105,7 +105,7 @@
       - alias: Fade in moode light
         service: light.turn_on
         data:
-          entity_id: light.loft
+          entity_id: light.reol
           brightness: 120
           transition: 300
 
