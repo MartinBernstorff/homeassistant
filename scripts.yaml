@@ -10,10 +10,10 @@
         service: script.turn_on
         data:
           entity_id: script.carpebathroom
-      - alias: Ceiling
-        service: script.turn_on
-        data:
-          entity_id: script.carpeceiling
+      #- alias: Ceiling
+      #  service: script.turn_on
+      #  data:
+      #    entity_id: script.carpeceiling
       - alias: Carpe reol
         service: script.turn_on
         data:
