@@ -1,3 +1,9 @@
+  python-testing:
+    name: Python testing
+    icon: mdi:developer-board
+    entities:
+      - input_boolean.carpediem
+      - input_select.carpediemfactor
   light_automation:
     name: Light automation
     entities:
@@ -11,9 +17,3 @@
       - input_boolean.mm
       - switch.benq
       - media_player.pioneer
-  python-testing:
-    name: Python testing
-    icon: mdi:developer-board
-    entities:
-      - input_boolean.carpediem
-      - input_select.CarpeDiemFactor
