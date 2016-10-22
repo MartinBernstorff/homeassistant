@@ -11,3 +11,6 @@
       - input_boolean.mm
       - switch.benq
       - media_player.pioneer
+  python-testing:
+    name: Python testing
+    icon: mdi:developer-board
