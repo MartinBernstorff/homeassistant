@@ -10,3 +10,7 @@
     name: Movie mode
     icon: mdi:movie
     initial: off
+  carpediem:
+    name: Carpe diem
+    icon: mdi:duck
+    initial: off

@@ -1,0 +1,10 @@
+  CarpeDiemFactor:
+    name: CarpeDiemFactor
+    icon: mdi:weather-sunset
+    initial: off
+    options:
+      - 0.5
+      - 0.8
+      - 1.0
+      - 1.2
+    initial: 1.0
