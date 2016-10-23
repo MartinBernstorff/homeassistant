@@ -56,15 +56,18 @@ class CarpeDiem(appapi.AppDaemon):
     def setstate(self, lt, bness, fade, color=""):
         switch = self.args["switch"]
 
-        self.log("Set " + lt + " to fade in " + str(fade * self.modulator) + "s")
+        if self.get_state(switch) == "on":
+            self.log("Set " + lt + " to fade in " + str(fade * self.modulator) + "s")
 
-        if color != "":
-            self.turn_on(lt, brightness = bness, transition = self.modulator * fade, xy_color = color)
+            if color != "":
+                self.turn_on(lt, brightness = bness, transition = self.modulator * fade, xy_color = color)
+            else:
+                self.turn_on(lt, brightness = bness, transition = self.modulator * fade)
+
+
+            time.sleep(self.modulator * fade)
         else:
-            self.turn_on(lt, brightness = bness, transition = self.modulator * fade)
-
-
-        time.sleep(self.modulator * fade)
+            self.log("Switch turned off, terminating")
 
     # pylint: disable=too-many-arguments
     def updatefactor(self, entity="", attribute="", old="", new="", kwargs=""):
