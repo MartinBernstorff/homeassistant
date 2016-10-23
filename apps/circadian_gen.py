@@ -21,7 +21,7 @@ class CircadianGen(appapi.AppDaemon):
 
     def get_circ_brightness(self, l=""):
         t0 = self.now.replace(hour=6, minute=30, second=0)
-        t1 = self.now.replace(hour=8, minute=0, second=0)
+        t1 = self.now.replace(hour=7, minute=0, second=0)
         t2 = self.now.replace(hour=13, minute=0, second=0)
         t3 = self.now.replace(hour=18, minute=0, second=0)
         t4 = self.now.replace(hour=21, minute=0, second=0)
@@ -54,8 +54,8 @@ class CircadianGen(appapi.AppDaemon):
         self.brightness = (start + (end - start) * position / fadelength) * base
 
     def get_circ_hue(self, l=""):
-        t0 = self.now.replace(hour=7, minute=0, second=0)
-        t1 = self.now.replace(hour=8, minute=0, second=0)
+        t0 = self.now.replace(hour=6, minute=0, second=0)
+        t1 = self.now.replace(hour=7, minute=0, second=0)
         t2 = self.now.replace(hour=13, minute=0, second=0)
         t3 = self.now.replace(hour=20, minute=0, second=0)
         t4 = self.now.replace(hour=21, minute=0, second=0)
