@@ -7,12 +7,3 @@
       - 125%
     icon: mdi:clock-fast
     initial: 100%
-  sunsetfactor:
-    name: Sunset duration
-    options:
-      - 50%
-      - 75%
-      - 100%
-      - 125%
-    icon: mdi:clock-fast
-    initial: 100%
