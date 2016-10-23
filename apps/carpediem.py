@@ -1,5 +1,6 @@
 import appdaemon.appapi as appapi
 import time
+import datetime
 
 #
 # Carpediem app
@@ -24,6 +25,10 @@ class CarpeDiem(appapi.AppDaemon):
         self.listen_state(self.carpecorner, switch, new = "on")
         self.listen_state(self.carpereol, switch, new = "on")
         self.listen_state(self.carpebathroom, switch, new = "on")
+
+        #Reset the switch at 20:00 each day
+        time = datetime.time(20, 0, 0)
+        self.run_daily(self.reset, time)
 
     def carpecorner(self, entity, attribute, old, new, kwargs):
         #Make short corner light var
@@ -61,6 +66,7 @@ class CarpeDiem(appapi.AppDaemon):
 
         time.sleep(self.modulator * fade)
 
+    # pylint: disable=too-many-arguments
     def updatefactor(self, entity="", attribute="", old="", new="", kwargs=""):
         self.factor_state = self.get_state(self.args["factor"])
 
@@ -74,3 +80,6 @@ class CarpeDiem(appapi.AppDaemon):
             self.modulator = 1.25
 
         self.log("Modulator set to " + str(self.modulator))
+
+    def reset(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.turn_off(self.args["switch"])
