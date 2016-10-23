@@ -1,9 +1,9 @@
-  CarpeDiemFactor:
-    name: CarpeDiemFactor
-    icon: mdi:weather-sunset
+  carpediemfactor:
+    name: Carpe diem speed
     options:
-      - 0.5
-      - 0.8
-      - 1.0
-      - 1.2
-    initial: 1.0
+      - 50%
+      - 75%
+      - 100%
+      - 125%
+    icon: mdi:speedometer
+    initial: 100%
