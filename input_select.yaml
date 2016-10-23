@@ -1,9 +1,9 @@
   carpediemfactor:
-    name: Carpe diem speed
+    name: Carpe diem duration
     options:
       - 50%
       - 75%
       - 100%
       - 125%
-    icon: mdi:speedometer
+    icon: mdi:clock-fast
     initial: 100%
