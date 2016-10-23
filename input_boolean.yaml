@@ -1,3 +1,7 @@
+  sunrise:
+    name: Sunrise
+    icon: mdi:weather-sunset
+    initial: off
   mm:
     name: Movie mode
     icon: mdi:movie

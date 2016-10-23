@@ -9,6 +9,7 @@
       - input_boolean.carpediem
       - input_select.carpediemfactor
       - input_boolean.circadian
+      - input_boolean.sunrise
   media:
     name: Media
     icon: mdi:movie
