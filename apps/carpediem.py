@@ -1,29 +1,76 @@
 import appdaemon.appapi as appapi
+import time
 
 #
-# Weekend_sleeper app
+# Carpediem app
 #
 # Args:
-#
+#   switch: The switch that initializes the script
+#   factor: the input_select that determines the factor length
 
-class WeekendSleeper(appapi.AppDaemon):
+class CarpeDiem(appapi.AppDaemon):
 
     def initialize(self):
-        self.log("Weekend-sleeper initialized")
+        self.log("Initializing carpe diem with switch: " + self.args["switch"])
 
-        time = datetime.time(12, 0, 0)
-        self.log("I'll make sure that you can sleep in by checking the state of input_boolean.sunrise at ")
-        self.log(time)
+        #Setup the switch object
+        switch = self.args["switch"]
 
-        # Schedule a daily callback that will call run_daily() at 12am every midday
-        self.run_daily(self.sleepin, time)
+        #Update factor
+        self.updatefactor()
+        self.listen_state(self.updatefactor, self.args["factor"])
 
-    def sleepin(self, kwargs):
-        weekday = datetime.datetime.today().weekday() + 1
-        if weekday == 5 or weekday == 6:
-            self.turn_off(self.args["automation"])
-            self.log("Turned off sunrise to get some sweet sleep")
+        #Register callback for switch turning on
+        self.listen_state(self.carpecorner, switch, new = "on")
+        self.listen_state(self.carpereol, switch, new = "on")
+        self.listen_state(self.carpebathroom, switch, new = "on")
 
-        if weekday == 7:
-            self.turn_on(self.args["automation"])
-            self.log("Turned on sunrise to make sure you rise up!")
+    def carpecorner(self, entity, attribute, old, new, kwargs):
+        #Make short corner light var
+        cl = "light.monitor"
+        self.setstate(cl, 150, 60, [ 0.674, 0.322 ])
+        self.setstate(cl, 120, 120, [ 0.5268, 0.4133 ])
+        self.setstate(cl, 204, 720, [ 0.4255, 0.3998 ])
+
+    def carpebathroom(self, entity, attribute, old, new, kwargs):
+        #Make short bathroom light var
+        bl = "light.bathroom"
+        self.setstate(bl, 150, 60, [ 0.674, 0.322 ])
+        self.setstate(bl, 120, 120, [ 0.5268, 0.4133 ])
+        self.setstate(bl, 204, 720, [ 0.4255, 0.3998 ])
+
+
+    def carpereol(self, entity, attribute, old, new, kwargs):
+        #Make short reol light var
+        rl = "light.reol"
+
+        time.sleep(self.modulator * 300)
+        self.setstate(rl, 120, 300)
+
+
+    def setstate(self, lt, bness, fade, color=""):
+        switch = self.args["switch"]
+
+        self.log("Set " + lt + " to fade in " + str(fade * self.modulator) + "s")
+
+        if color != "":
+            self.turn_on(lt, brightness = bness, transition = self.modulator * fade, xy_color = color)
+        else:
+            self.turn_on(lt, brightness = bness, transition = self.modulator * fade)
+
+
+        time.sleep(self.modulator * fade)
+
+    def updatefactor(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.factor_state = self.get_state(self.args["factor"])
+
+        if self.factor_state == "50%":
+            self.modulator = 0.01
+        elif self.factor_state == "75%":
+            self.modulator = 0.75
+        elif self.factor_state == "100%":
+            self.modulator = 1
+        elif self.factor_state == "125%":
+            self.modulator = 1.25
+
+        self.log("Modulator set to " + str(self.modulator))
