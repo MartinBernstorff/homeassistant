@@ -2,6 +2,8 @@
     name: Python testing
     icon: mdi:developer-board
     entities:
+      - input_select.sunsetfactor
+      - input_boolean.sunset
 
   light_automation:
     name: Light automation
