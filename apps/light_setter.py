@@ -24,6 +24,7 @@ class LightSetter(appapi.AppDaemon):
         #Run every 30 seconds
         self.run_every(self.setlights, b, 60)
         self.listen_state(self.setlights, "input_boolean.circadian", new = "on")
+        self.listen_state(self.setlights, "light.monitor", new = "on", old = "off")
 
     def setlights(self, entity="", attribute="", old="", new="", kwargs=""):
         if self.get_state("input_boolean.circadian") == "on":
