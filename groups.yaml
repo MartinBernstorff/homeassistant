@@ -2,12 +2,12 @@
     name: Python testing
     icon: mdi:developer-board
     entities:
-      - input_boolean.carpediem
-      - input_select.carpediemfactor
+
   light_automation:
     name: Light automation
     entities:
-      - script.carpediem
+      - input_boolean.carpediem
+      - input_select.carpediemfactor
       - input_boolean.sunrise
       - input_boolean.movie_fade
   media:

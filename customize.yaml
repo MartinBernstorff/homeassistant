@@ -1,5 +1,6 @@
     script.carpediem:
       icon: mdi:duck
+      hidden: true
     switch.benq:
       icon: mdi:projector
 
