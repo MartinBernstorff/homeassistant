@@ -5,6 +5,7 @@ import datetime
 # Weekend_sleeper app
 #
 # Args:
+# automation (switch that needs to be turned on/off)
 #
 
 class WeekendSleeper(appapi.AppDaemon):
