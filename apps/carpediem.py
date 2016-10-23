@@ -33,9 +33,9 @@ class CarpeDiem(appapi.AppDaemon):
     def carpecorner(self, entity, attribute, old, new, kwargs):
         #Make short corner light var
         cl = "light.monitor"
-        self.setstate(cl, 150, 60, [ 0.674, 0.322 ])
-        self.setstate(cl, 120, 120, [ 0.5268, 0.4133 ])
-        self.setstate(cl, 204, 720, [ 0.4255, 0.3998 ])
+        self.setstate(cl, 150, 60, [ 0.674, 0.322 ]) #Red initial
+        self.setstate(cl, 120, 120, [ 0.5268, 0.4133 ]) #Warm orange
+        self.setstate(cl, 204, 720, [ 0.4255, 0.3998 ]) #Bright orange
 
     def carpebathroom(self, entity, attribute, old, new, kwargs):
         #Make short bathroom light var
