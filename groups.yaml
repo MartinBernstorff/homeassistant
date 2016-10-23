@@ -2,9 +2,7 @@
     name: Python testing
     icon: mdi:developer-board
     entities:
-      - input_select.sunsetfactor
-      - input_boolean.sunset
-
+      input_boolean.circadian
   light_automation:
     name: Light automation
     entities:
@@ -12,6 +10,8 @@
       - input_select.carpediemfactor
       - input_boolean.sunrise
       - input_boolean.movie_fade
+      - input_select.sunsetfactor
+      - input_boolean.sunset
   media:
     name: Media
     icon: mdi:movie

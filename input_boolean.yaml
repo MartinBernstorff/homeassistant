@@ -14,3 +14,7 @@
     name: Sunset
     icon: mdi:weather-sunset-down
     initial: off
+  circadian:
+    name: Circadian
+    icon: mdi:weather-night
+    initial: on
