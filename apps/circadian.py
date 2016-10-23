@@ -15,24 +15,28 @@ class Circadian(appapi.AppDaemon):
         self.now = datetime.datetime.now()
         b = self.now + datetime.timedelta(0, 3)
 
-    def get_circ_brightness(self, l=""):
+        #Set time intervals
         self.now = datetime.datetime.now()
+
+
+    def get_circ_brightness(self, l=""):
         t0 = self.now.replace(hour=7, minute=0, second=0)
         t1 = self.now.replace(hour=8, minute=0, second=0)
         t2 = self.now.replace(hour=13, minute=0, second=0)
         t3 = self.now.replace(hour=18, minute=0, second=0)
         t4 = self.now.replace(hour=21, minute=0, second=0)
-        t5 = self.now.replace(hour=21, minute=30, second=0)
-        if self.now > t0 and self.now < t1:
-            self.set_circ_brightness(0.5, 0, t1, t0)
-        elif self.now > t1 and self.now < t2:
-            self.set_circ_brightness(1, 0.5, t2, t1)
-        elif self.now > t2 and self.now < t3:
+        t5 = self.now.replace(hour=22, minute=30, second=0)
+
+        if self.now > t0 and self.now <= t1:
+            Circadian.set_circ_brightness(self, 0.8, 0, t1, t0)
+        elif self.now > t1 and self.now <= t2:
+            Circadian.set_circ_brightness(self, 1, 0.8, t2, t1)
+        elif self.now > t2 and self.now <= t3:
             self.brightness = 255
-        elif self.now > t3 and self.now < t4:
-            self.set_circ_brightness(0.5, 1, t4, t3)
-        elif self.now > t4 and self.now < t5:
-            self.set_circ_brightness(0.5, 0, t5, t4)
+        elif self.now > t3 and self.now <= t4:
+            Circadian.set_circ_brightness(self, 0.8, 1, t4, t3)
+        elif self.now > t4 and self.now <= t5:
+            Circadian.set_circ_brightness(self, 0, 0.8, t5, t4)
         else:
             self.brightness = 0
 
@@ -48,3 +52,44 @@ class Circadian(appapi.AppDaemon):
         position = (self.now-starttime).seconds
 
         self.brightness = (start + (end - start) * position / fadelength) * base
+
+    def get_circ_hue(self, l=""):
+        t0 = self.now.replace(hour=7, minute=0, second=0)
+        t1 = self.now.replace(hour=8, minute=0, second=0)
+        t2 = self.now.replace(hour=13, minute=0, second=0)
+        t3 = self.now.replace(hour=20, minute=0, second=0)
+        t4 = self.now.replace(hour=21, minute=0, second=0)
+        t5 = self.now.replace(hour=22, minute=30, second=0)
+
+        if self.now > t0 and self.now <= t1:
+            Circadian.set_circ_colortemp(self, 0.4255, 0.5268, 0.3998, 0.4133, t1, t0)
+        elif self.now > t1 and self.now <= t2:
+            Circadian.set_circ_colortemp(self, 0.3136, 0.4255, 0.3237, 0.3998, t2, t1)
+        elif self.now > t2 and self.now <= t3:
+            Circadian.set_circ_colortemp(self, 0.4255, 0.3136, 0.3998, 0.3237, t3, t2)
+        elif self.now > t3 and self.now <= t4:
+            Circadian.set_circ_colortemp(self, 0.5268, 0.4255, 0.4133, 0.3998, t4, t3)
+        elif self.now > t4 and self.now <= t5:
+            Circadian.set_circ_colortemp(self, 0.674, 0.5268, 0.322, 0.4133, t5, t4)
+        else:
+            self.colortemp = [ 0.674, 0.322 ]
+
+        return self.colortemp
+
+        #self.log("Set new circ brightness {} at {}".format(self.brightness, self.now))
+
+    def set_circ_colortemp(self, end_x, start_x, end_y, start_y, endtime, starttime):
+        fadelength = (endtime-starttime).seconds
+        position = (self.now-starttime).seconds
+
+        self.x_now = start_x + (end_x - start_x) * position / fadelength
+        self.y_now = start_y + (end_y - start_y) * position / fadelength
+
+        self.colortemp = [ self.x_now, self.y_now]
+"""
+        [ 0.674, 0.322 ] #Red initial
+        [ 0.5268, 0.4133 ] #Warm orange
+        [ 0.4255, 0.3998 ] #Bright orange
+        [ 0.3136, 0.3237] #Brightest white
+
+"""
