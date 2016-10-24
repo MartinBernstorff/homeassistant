@@ -35,7 +35,7 @@ class LightSetter(appapi.AppDaemon):
 
             self.setlight("light.monitor", 1.4)
             self.setlight("light.reol", 0.4)
-            self.setlight("light.loft", 0.4)
+            self.setlight("light.loft", 0.6)
 
         else:
             self.log("Circadian switch is off, lights not updated")
