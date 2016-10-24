@@ -7,16 +7,16 @@ import datetime
 #
 # Args:
 #   switch: The switch that initializes the script
-#   factor: the input_select that determines the factor length
 
 class CircadianSingleLights(appapi.AppDaemon):
 
     def initialize(self):
-        self.log("Initializing carpe diem with switch: " + self.args["switch"])
+        self.log("Initializing CircadianSingleLights with switch: " + self.args["switch"])
 
         #Setup the switch object
         switch = self.args["switch"]
 
+        #Setup callback
         time = datetime.time(21, 15, 0)
         self.run_daily(self.ceiling, time)
 
