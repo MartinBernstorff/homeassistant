@@ -17,18 +17,19 @@ class Sunrise(appapi.AppDaemon):
         #Setup the switch object
         switch = self.args["switch"]
 
-        #Reset the switch at 6:25 each day
-        time = datetime.time(6, 25, 0)
+        #Reset the switch at 6:00 each day
+        time = datetime.time(6, 0, 0)
         self.run_daily(self.rise, time)
 
     def rise(self, entity="", attribute="", old="", new="", kwargs=""):
         #Make short corner light var
         self.modulator = 1
         self.turn_off("input_boolean.circadian")
-        self.setstate("light.monitor", 100, 1200, [ 0.674, 0.322 ])
+        self.setstate("light.monitor", 1, 1, [ 0.674, 0.322 ], 2700)
+        self.setstate("light.monitor", 100, 1200, [ 0.5268, 0.4133 ])
         self.turn_on("input_boolean.circadian")
 
-    def setstate(self, lt, bness, fade, color=""):
+    def setstate(self="", lt="", bness="", fade="", color="", post_delay="0"):
         switch = self.args["switch"]
 
         if self.get_state(switch) == "on":
@@ -39,7 +40,7 @@ class Sunrise(appapi.AppDaemon):
             else:
                 self.turn_on(lt, brightness = bness, transition = self.modulator * fade)
 
-
-            time.sleep(self.modulator * fade)
+            self.log("Sleeping for {}".format(self.modulator * fade + post_delay))
+            time.sleep(self.modulator * fade + post_delay)
         else:
             self.log("Switch turned off, terminating")
