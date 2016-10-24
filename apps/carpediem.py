@@ -1,4 +1,5 @@
 import appdaemon.appapi as appapi
+import circadian_gen
 import time
 import datetime
 
@@ -34,15 +35,13 @@ class CarpeDiem(appapi.AppDaemon):
         #Make short corner light var
         cl = "light.monitor"
         self.setstate(cl, 150, 60, [ 0.674, 0.322 ]) #Red initial
-        self.setstate(cl, 120, 120, [ 0.5268, 0.4133 ]) #Warm orange
-        self.setstate(cl, 204, 720, [ 0.4255, 0.3998 ]) #Bright orange
+        self.setstate(cl, circadian_gen.CircadianGen.get_circ_brightness(self), 600, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
 
     def carpebathroom(self, entity, attribute, old, new, kwargs):
         #Make short bathroom light var
         bl = "light.bathroom"
         self.setstate(bl, 150, 60, [ 0.674, 0.322 ])
-        self.setstate(bl, 120, 120, [ 0.5268, 0.4133 ])
-        self.setstate(bl, 204, 720, [ 0.4255, 0.3998 ])
+        self.setstate(bl, circadian_gen.CircadianGen.get_circ_brightness(self), 600, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
 
 
     def carpereol(self, entity, attribute, old, new, kwargs):
@@ -50,7 +49,7 @@ class CarpeDiem(appapi.AppDaemon):
         rl = "light.reol"
 
         time.sleep(self.modulator * 300)
-        self.setstate(rl, 120, 300)
+        self.setstate(rl, circadian_gen.CircadianGen.get_circ_brightness(self), 300, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
 
 
     def setstate(self, lt, bness, fade, color=""):
