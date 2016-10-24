@@ -14,7 +14,6 @@ class CarpeDiem(appapi.AppDaemon):
 
     def initialize(self):
         self.log("Initializing carpe diem with switch: " + self.args["switch"])
-
         #Setup the switch object
         switch = self.args["switch"]
 
@@ -33,6 +32,10 @@ class CarpeDiem(appapi.AppDaemon):
 
     def carpecorner(self, entity, attribute, old, new, kwargs):
         #Make short corner light var
+        #Setup circadian dependencies
+        self.now = datetime.datetime.now()
+        self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
+        self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
         cl = "light.monitor"
         self.turn_off("input_boolean.circadian") #Turn off circadian temporarily
         self.setstate(cl, 150, 60, [ 0.674, 0.322 ]) #Red initial
@@ -40,6 +43,10 @@ class CarpeDiem(appapi.AppDaemon):
         self.turn_on("input_boolean.circadian") #Turn back on circadian
 
     def carpebathroom(self, entity, attribute, old, new, kwargs):
+        #Setup circadian dependencies
+        self.now = datetime.datetime.now()
+        self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
+        self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
         #Make short bathroom light var
         bl = "light.bathroom"
         self.setstate(bl, 150, 60, [ 0.674, 0.322 ])
@@ -47,6 +54,10 @@ class CarpeDiem(appapi.AppDaemon):
 
 
     def carpereol(self, entity, attribute, old, new, kwargs):
+        #Setup circadian dependencies
+        self.now = datetime.datetime.now()
+        self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
+        self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
         #Make short reol light var
         rl = "light.reol"
 
@@ -74,6 +85,8 @@ class CarpeDiem(appapi.AppDaemon):
     def updatefactor(self, entity="", attribute="", old="", new="", kwargs=""):
         self.factor_state = self.get_state(self.args["factor"])
 
+        if self.factor_state == "1%":
+            self.modulator = 0.01
         if self.factor_state == "50%":
             self.modulator = 0.5
         elif self.factor_state == "75%":

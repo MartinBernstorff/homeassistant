@@ -1,6 +1,7 @@
   carpediemfactor:
     name: Carpe diem duration
     options:
+      - 1%
       - 50%
       - 75%
       - 100%

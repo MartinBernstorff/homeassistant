@@ -12,25 +12,3 @@
     action:
       service: script.turn_on
       entity_id: script.sunrise
-
-  #Turn on projector and receiver
-  - alias: "mmOn"
-    trigger:
-      - platform: state
-        entity_id: input_boolean.mm
-        state: 'on'
-    action:
-      service: script.turn_on
-      entity_id: script.moviemodeon
-
-  #Turn off projector and receiver
-  - alias: "mmOff"
-    trigger:
-      - platform: state
-        entity_id: input_boolean.mm
-        state: 'off'
-    action:
-      - service: switch.turn_off
-        entity_id: switch.benq
-      - service: media_player.turn_off
-        entity_id: media_player.pioneer
