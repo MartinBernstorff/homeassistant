@@ -34,8 +34,10 @@ class CarpeDiem(appapi.AppDaemon):
     def carpecorner(self, entity, attribute, old, new, kwargs):
         #Make short corner light var
         cl = "light.monitor"
+        self.turn_off("input_boolean.circadian") #Turn off circadian temporarily
         self.setstate(cl, 150, 60, [ 0.674, 0.322 ]) #Red initial
         self.setstate(cl, circadian_gen.CircadianGen.get_circ_brightness(self), 600, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
+        self.turn_on("input_boolean.circadian") #Turn back on circadian
 
     def carpebathroom(self, entity, attribute, old, new, kwargs):
         #Make short bathroom light var
@@ -73,7 +75,7 @@ class CarpeDiem(appapi.AppDaemon):
         self.factor_state = self.get_state(self.args["factor"])
 
         if self.factor_state == "50%":
-            self.modulator = 0.001
+            self.modulator = 0.5
         elif self.factor_state == "75%":
             self.modulator = 0.75
         elif self.factor_state == "100%":
