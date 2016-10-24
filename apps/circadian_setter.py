@@ -1,7 +1,7 @@
 import appdaemon.appapi as appapi
 import circadian_gen
 import datetime
-import time
+from multiprocessing import Process
 
 #
 # Circadian app
@@ -21,8 +21,8 @@ class CircadianSetter(appapi.AppDaemon):
 
         self.log("{} initiated".format(__name__))
 
-        #Run every 30 seconds
-        self.run_every(self.setlights, b, 60)
+        #Run every 2 minutes
+        self.run_every(self.setlights, b, 120)
         self.listen_state(self.setlights, "input_boolean.circadian", new = "on")
         self.listen_state(self.setlights, "light.monitor", new = "on", old = "off")
 
@@ -31,11 +31,12 @@ class CircadianSetter(appapi.AppDaemon):
             self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
             self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
             self.now = datetime.datetime.now()
-            self.log("Updating lights, time is {}, color temp is {} and brightness is {}".format(self.now.time(), self.hue, self.brightness))
 
             self.setlight("light.monitor", 1.4)
             self.setlight("light.reol", 0.4)
             self.setlight("light.loft", 0.6)
+
+            self.log("Updating lights, time is {}, color temp is {} and brightness is {}".format(self.now.time(), self.hue, self.brightness))
 
         else:
             self.log("Circadian switch is off, lights not updated")
@@ -43,4 +44,4 @@ class CircadianSetter(appapi.AppDaemon):
     def setlight(self, light, modifier):
         if self.get_state("input_boolean.circadian") == "on":
             if self.get_state(light) == "on":
-                self.turn_on(light, transition = 1, xy_color = circadian_gen.CircadianGen.get_circ_hue(self), brightness = modifier * circadian_gen.CircadianGen.get_circ_brightness(self))
+                self.turn_on(light, transition = 30, xy_color = circadian_gen.CircadianGen.get_circ_hue(self), brightness = modifier * circadian_gen.CircadianGen.get_circ_brightness(self))
