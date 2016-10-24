@@ -19,6 +19,22 @@ history:
 logbook:
 #sun:
 
+emulated_hue:
+
+##Setup MQTT
+mqtt:
+  broker: m20.cloudmqtt.com
+  port: 23823
+  username: iuubkqqg
+  password: wNMrc6NvT9HI
+
+#Setup zones
+zone:
+  - name: 'Home'
+    latitude: 56.1972
+    longitude: 10.248
+    radius: 15
+
 #############
 ## SENSORS ##
 #############

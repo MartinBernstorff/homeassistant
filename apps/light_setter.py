@@ -33,9 +33,9 @@ class LightSetter(appapi.AppDaemon):
             self.now = datetime.datetime.now()
             self.log("Updating lights, time is {}, color temp is {} and brightness is {}".format(self.now.time(), self.hue, self.brightness))
 
-            self.setlight("light.monitor", 1.2)
-            self.setlight("light.reol", 0.8)
-            self.setlight("light.loft", 1)
+            self.setlight("light.monitor", 1.4)
+            self.setlight("light.reol", 0.4)
+            self.setlight("light.loft", 0.4)
 
         else:
             self.log("Circadian switch is off, lights not updated")
