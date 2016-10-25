@@ -13,7 +13,7 @@ import datetime
 class MovieMode(appapi.AppDaemon):
 
     def initialize(self):
-        self.log("Initializing {} with switch: {}".format(__name__,self.args["switch"]))
+        self.log("Initializing {} with switch: {}".format(__name__, self.args["switch"]))
         #Setup the switch object
         switch = self.args["switch"]
 
@@ -23,17 +23,18 @@ class MovieMode(appapi.AppDaemon):
 
     def on(self, entity, attribute, old, new, kwargs):
         self.log("Moviemode on!")
-        self.turn_on("media_player.pioneer")
+        self.turn_off("input_boolean.circadian") #Turn off circadian temporarily
 
         if self.get_state("media_player.pioneer") == "off":
+            self.turn_on("media_player.pioneer")
+
             i = 0
             while (i < 10) and self.get_state("media_player.pioneer") == "off":
                 time.sleep(2)
                 i += 1
                 self.log("Receiver is off, checking in 2 seconds, i = {}".format(i))
-        else:
-            if self.get_state("media_player.pioneer") == "on":
-                self.log("Receiver is already on, proceding")
+        elif self.get_state("media_player.pioneer") == "on":
+            self.log("Receiver is already on, proceding")
 
         self.turn_on("script.moviemode")
         self.turn_on("switch.benq")
@@ -46,23 +47,24 @@ class MovieMode(appapi.AppDaemon):
 
     def off(self, entity, attribute, old, new, kwargs):
         #Setup circadian dependencies
+
         self.now = datetime.datetime.now()
         self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
         self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
 
+        self.setstate("light.loft", self.brightness, 40, self.hue)
+        self.setstate("light.reol", self.brightness, 40, self.hue)
+        self.setstate("light.monitor", self.brightness, 40, self.hue)
+
         i = 0
-        while (i<40):
+        while (i<100):
             self.call_service("media_player/volume_down", entity_id = "media_player.pioneer")
             time.sleep(0.2)
             i += 1
 
         self.turn_off("switch.benq")
         self.turn_off("media_player.pioneer")
-
-        self.setstate("light.loft", self.brightness, 10, self.hue)
-        self.setstate("light.reol", self.brightness, 10, self.hue)
-        self.setstate("light.monitor", self.brightness, 10, self.hue)
-
+        self.turn_on("input_boolean.circadian") #Turn circadian adjustments back on
         self.log("Moviemode off!")
 
     def setstate(self, lt, bness, fade, color=""):
