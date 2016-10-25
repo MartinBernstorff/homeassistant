@@ -25,8 +25,9 @@ class Sunrise(appapi.AppDaemon):
         #Make short corner light var
         self.modulator = 1
         self.turn_off("input_boolean.circadian")
-        self.setstate("light.monitor", 1, 1, [ 0.674, 0.322 ], 2700)
-        self.setstate("light.monitor", 100, 1200, [ 0.5268, 0.4133 ])
+        self.setstate("light.monitor", 1, 1, [ 0.674, 0.322 ], 900)
+        self.setstate("light.monitor", 5, 1800, [ 0.674, 0.322 ])
+        self.setstate("light.monitor", 100, 1800, [ 0.5268, 0.4133 ])
         self.turn_on("input_boolean.circadian")
 
     def setstate(self="", lt="", bness="", fade="", color="", post_delay="0"):
