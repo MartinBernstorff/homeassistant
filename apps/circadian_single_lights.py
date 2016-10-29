@@ -24,9 +24,9 @@ class CircadianSingleLights(appapi.AppDaemon):
         self.run_daily(self.reol, time2)
 
     def ceiling(self, entity="", attribute="", old="", new="", kwargs=""):
-        if self.get_state(self.args["switch"]) == "on":
+        if self.get_state(self.args["switch"]):
             self.turn_off("light.loft")
 
     def reol(self, entity="", attribute="", old="", new="", kwargs=""):
-        if self.get_state(self.args["switch"]) == "on":
+        if self.get_state(self.args["switch"]):
             self.turn_off("light.loft")
