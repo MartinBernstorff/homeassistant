@@ -38,12 +38,15 @@ class MovieMode(appapi.AppDaemon):
 
         self.turn_on("script.moviemode")
         self.turn_on("switch.benq")
-        self.setstate("light.loft", 0, 10)
-        self.setstate("light.reol", 0, 10)
         self.setstate("light.monitor", 0, 10)
+        self.setstate("light.loft", 0, 8)
+        self.setstate("light.reol", 0, 13)
+
         self.turn_off("light.loft")
         self.turn_off("light.reol")
         self.turn_off("light.monitor")
+        self.turn_off("light.hallway")
+        self.turn_off("light.bathroom")
 
     def off(self, entity, attribute, old, new, kwargs):
         #Setup circadian dependencies
@@ -52,14 +55,15 @@ class MovieMode(appapi.AppDaemon):
         self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
         self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
 
-        self.setstate("light.loft", self.brightness, 40, self.hue)
-        self.setstate("light.reol", self.brightness, 40, self.hue)
         self.setstate("light.monitor", self.brightness, 40, self.hue)
+        self.setstate("light.reol", self.brightness, 40, self.hue)
+        self.setstate("light.loft", self.brightness, 40, self.hue)
 
         i = 0
-        while (i<100):
-            self.call_service("media_player/volume_down", entity_id = "media_player.pioneer")
-            time.sleep(0.2)
+        while (i<10):
+            vollevel = int(self.get_state("media_player.pioneer", "volume_level")) - (0.03 * i)
+            self.call_service("media_player/volume_set", entity_id = "media_player.pioneer", volume_level = vollevel)
+            time.sleep(0.25)
             i += 1
 
         self.turn_off("switch.benq")
@@ -77,4 +81,3 @@ class MovieMode(appapi.AppDaemon):
             self.turn_on(lt, brightness = bness, transition = self.modulator * fade, xy_color = color)
         else:
             self.turn_on(lt, brightness = bness, transition = self.modulator * fade)
-            time.sleep(self.modulator * fade)
