@@ -38,7 +38,7 @@ class CircadianGen(appapi.AppDaemon):
         elif self.now > t4 and self.now <= t5:
             CircadianGen.set_circ_brightness(self, 0.05, 1.0, t5, t4)
         else:
-            self.brightness = 0
+            self.brightness = 3
 
         return self.brightness
 
@@ -57,7 +57,7 @@ class CircadianGen(appapi.AppDaemon):
         t0 = self.now.replace(hour=6, minute=0, second=0)
         t1 = self.now.replace(hour=9, minute=0, second=0)
         t2 = self.now.replace(hour=13, minute=0, second=0)
-        t3 = self.now.replace(hour=18, minute=0, second=0)
+        t3 = self.now.replace(hour=19, minute=0, second=0)
         t4 = self.now.replace(hour=21, minute=0, second=0)
         t5 = self.now.replace(hour=22, minute=30, second=0)
 
