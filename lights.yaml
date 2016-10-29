@@ -1,3 +1,4 @@
   platform: hue
   host: 192.168.1.108
   allow_unreachable: true
+  scan_interval: 5
