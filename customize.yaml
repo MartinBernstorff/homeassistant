@@ -2,6 +2,8 @@
       icon: mdi:projector
 
     #HIDE
+    media_player.martins_iphone_2:
+      hidden: true
     media_player.rasplex:
       hidden: true
     media_player.plex_web_safari:
@@ -10,15 +12,7 @@
       hidden: true
     scene.livingroom_normal:
       hidden: true
-    script.sunrise:
-      hidden: true
-    script.carpecorner:
-      hidden: true
-    script.carpeceiling:
-      hidden: true
-    script.carpetoilet:
-      hidden: true
-    script.moviemodeon:
+    script.moviemode:
       hidden: true
     automation.sunrise:
       hidden: true
