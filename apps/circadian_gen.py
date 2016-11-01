@@ -23,7 +23,7 @@ class CircadianGen(appapi.AppDaemon):
         t0 = self.now.replace(hour=5, minute=30, second=0)
         t1 = self.now.replace(hour=7, minute=0, second=0)
         t2 = self.now.replace(hour=13, minute=0, second=0)
-        t3 = self.now.replace(hour=18, minute=0, second=0)
+        t3 = self.now.replace(hour=17, minute=30, second=0)
         t4 = self.now.replace(hour=21, minute=0, second=0)
         t5 = self.now.replace(hour=21, minute=45, second=0)
 
@@ -55,7 +55,7 @@ class CircadianGen(appapi.AppDaemon):
 
     def get_circ_hue(self, l=""):
         t0 = self.now.replace(hour=5, minute=30, second=0)
-        t1 = self.now.replace(hour=9, minute=0, second=0)
+        t1 = self.now.replace(hour=7, minute=0, second=0)
         t2 = self.now.replace(hour=13, minute=0, second=0)
         t3 = self.now.replace(hour=19, minute=0, second=0)
         t4 = self.now.replace(hour=21, minute=0, second=0)
