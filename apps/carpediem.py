@@ -25,6 +25,7 @@ class CarpeDiem(appapi.AppDaemon):
         self.listen_state(self.carpecorner, switch, new = "on")
         self.listen_state(self.carpereol, switch, new = "on")
         self.listen_state(self.carpebathroom, switch, new = "on")
+        self.listen_state(self.carpeloft, switch, new = "on")
 
         #Reset the switch at 20:00 each day
         time = datetime.time(20, 0, 0)
@@ -52,7 +53,6 @@ class CarpeDiem(appapi.AppDaemon):
         self.setstate(bl, 150, 60, [ 0.674, 0.322 ])
         self.setstate(bl, circadian_gen.CircadianGen.get_circ_brightness(self), 600, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
 
-
     def carpereol(self, entity, attribute, old, new, kwargs):
         #Setup circadian dependencies
         self.now = datetime.datetime.now()
@@ -62,6 +62,17 @@ class CarpeDiem(appapi.AppDaemon):
         rl = "light.reol"
 
         time.sleep(self.modulator * 300)
+        self.setstate(rl, circadian_gen.CircadianGen.get_circ_brightness(self), 300, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
+
+    def carpeloft(self, entity, attribute, old, new, kwargs):
+        #Setup circadian dependencies
+        self.now = datetime.datetime.now()
+        self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
+        self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
+        #Make short reol light var
+        ll = "light.loft"
+
+        time.sleep(self.modulator * 600)
         self.setstate(rl, circadian_gen.CircadianGen.get_circ_brightness(self), 300, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
 
 
