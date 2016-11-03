@@ -59,15 +59,17 @@ class MovieMode(appapi.AppDaemon):
         self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
         self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
 
-        self.setstate("light.monitor", self.brightness, 40, self.hue)
-        self.setstate("light.reol", self.brightness, 40, self.hue)
-        self.setstate("light.loft", self.brightness, 40, self.hue)
+        self.setstate("light.monitor", self.brightness, 80, self.hue)
+        self.setstate("light.reol", self.brightness, 80, self.hue)
+        self.setstate("light.loft", self.brightness, 80, self.hue)
+
+        vollevel = self.get_state("media_player.pioneer", "volume_level")
 
         i = 0
-        while (i<40):
-            vollevel = self.get_state("media_player.pioneer", "volume_level") - (0.01 * i)
+        while (i<10):
+            vollevel -= (0.005 * i)
             self.call_service("media_player/volume_set", entity_id = "media_player.pioneer", volume_level = vollevel)
-            time.sleep(1)
+            time.sleep(2)
             i += 1
 
         self.turn_off("switch.benq")
