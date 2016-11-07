@@ -73,7 +73,7 @@ class CarpeDiem(appapi.AppDaemon):
         ll = "light.loft"
 
         time.sleep(self.modulator * 600)
-        self.setstate(rl, circadian_gen.CircadianGen.get_circ_brightness(self), 300, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
+        self.setstate(ll, circadian_gen.CircadianGen.get_circ_brightness(self), 300, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
 
 
     def setstate(self, lt, bness, fade, color=""):
