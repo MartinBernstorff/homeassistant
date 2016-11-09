@@ -35,20 +35,44 @@ class MovieMode(appapi.AppDaemon):
             self.turn_on("media_player.pioneer")
 
             i = 0
-            while (i < 10) and self.get_state("media_player.pioneer") == "off":
+            while (i < 15) and self.get_state("media_player.pioneer") == "off":
                 time.sleep(1)
                 i += 1
-                self.log("Receiver is off, checking in 2 seconds, i = {}".format(i))
+                self.log("Receiver is off, checking in 1 second, i = {}".format(i))
         elif self.get_state("media_player.pioneer") == "on":
             self.log("Receiver is already on, proceding")
 
-        time.sleep(2)
-
-        self.turn_on("script.moviemode")
-        self.turn_on("switch.benq")
         self.setstate("light.monitor", self.brightness * 0.5, 10)
         self.setstate("light.loft", 0, 8)
         self.setstate("light.reol", self.brightness * 0.2, 13)
+
+        #self.turn_on("script.moviemode")
+
+        if self.get_state("media_player.pioneer", "source") != "TUNER":
+            i = 0
+            while (i < 10) and self.get_state("media_player.pioneer", "source") != "TUNER":
+                self.call_service("media_player/select_source", entity_id = "media_player.pioneer", source = "TUNER")
+                i += 1
+                time.sleep(3)
+        else:
+            self.log("Source is already tuner")
+
+        self.call_service("media_player/volume_set", entity_id = "media_player.pioneer", volume_level = 0.8)
+        time.sleep(2)
+        self.call_service("media_player/select_source", entity_id = "media_player.pioneer", source = "RPI")
+
+        if self.get_state("media_player.pioneer", "source") != "RPI" and self.get_state("media_player.pioneer", "source") == "TUNER":
+            i = 0
+            while (i < 10) and self.get_state("media_player.pioneer", "source") != "RPI":
+                self.call_service("media_player/select_source", entity_id = "media_player.pioneer", source = "RPI")
+                i += 1
+                time.sleep(1)
+        else:
+            self.log("Source is already RPI")
+
+        self.call_service("media_player/volume_set", entity_id = "media_player.pioneer", volume_level = 0.7)
+
+        self.turn_on("switch.benq")
 
         self.turn_off("light.loft")
         self.turn_off("light.hallway")
