@@ -16,17 +16,19 @@ class Sunrise(appapi.AppDaemon):
 
         #Setup the switch object
         switch = self.args["switch"]
+        self.update_time()
+        self.listen_state(self.update_time, "input_select.sunrise_hour")
+        self.listen_state(self.update_time, "input_select.sunrise_minute")
 
-        #Reset the switch at 6:00 each day
-        time = datetime.time(6, 0, 0)
+        #Set sunrise time
+        time = datetime.time(int(self.hour), int(self.minute), 0)
         self.run_daily(self.rise, time)
 
     def rise(self, entity="", attribute="", old="", new="", kwargs=""):
         #Make short corner light var
         self.modulator = 1
         self.turn_off("input_boolean.circadian")
-        self.setstate("light.monitor", 1, 1, [ 0.674, 0.322 ], 900)
-        self.setstate("light.monitor", 5, 1800, [ 0.674, 0.322 ])
+        self.setstate("light.monitor", 1, 1, [ 0.674, 0.322 ], 3600)
         self.setstate("light.monitor", 100, 1800, [ 0.5268, 0.4133 ])
         self.turn_on("input_boolean.circadian")
 
@@ -41,7 +43,12 @@ class Sunrise(appapi.AppDaemon):
             else:
                 self.turn_on(lt, brightness = bness, transition = self.modulator * fade)
 
-            self.log("Sleeping for {}".format(self.modulator * fade + post_delay))
+            self.log("Sleeping for {}".format(int(self.modulator) * fade + post_delay))
             time.sleep(self.modulator * fade + post_delay)
         else:
             self.log("Switch turned off, terminating")
+
+    def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.hour = self.get_state("input_select.sunrise_hour")
+        self.minute = self.get_state("input_select.sunrise_minute")
+        self.log("Time set to {}:{}".format(self.hour, self.minute))

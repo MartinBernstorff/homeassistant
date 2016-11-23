@@ -1,28 +1,19 @@
     switch.benq:
       icon: mdi:projector
-
+    input_boolean.carpediem:
+      #echo: true
     #HIDE
     media_player.martins_iphone_2:
       hidden: true
     media_player.rasplex:
+      hidden: false
+    media_player.martins_macbook_air:
       hidden: true
     media_player.plex_web_safari:
       hidden: true
-    scene.livingroom_dim:
-      hidden: true
-    scene.livingroom_normal:
-      hidden: true
     script.moviemode:
       hidden: true
-    automation.sunrise:
-      hidden: true
-    automation.paused:
-      hidden: true
-    automation.playing:
-      hidden: true
-    automation.mmOff:
-      hidden: true
-    automation.mmOn:
+    scene.example:
       hidden: true
     sun.sun:
       hidden: true

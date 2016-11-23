@@ -1,15 +1,7 @@
-  - name: Livingroom normal
+  - name: Example
     entities:
         light.Corner:
             state: on
             transition: 10
             brightness: 30
             xy_color: [ 0.4448, 0.4066 ]
-  - name: Livingroom dim
-    entities:
-        light.Corner:
-            state: off
-            transition: 3
-        light.Loft:
-            state: off
-            transition: 3

@@ -9,6 +9,8 @@
       - input_boolean.carpediem
       - input_select.carpediemfactor
       - input_boolean.circadian
+      - input_select.sunrise_hour
+      - input_select.sunrise_minute
       - input_boolean.sunrise
   media:
     name: Media

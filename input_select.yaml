@@ -8,3 +8,25 @@
       - 125%
     icon: mdi:clock-fast
     initial: 100%
+  sunrise_minute:
+    name: Sunrise minute
+    options:
+      - 0
+      - 15
+      - 30
+      - 45
+    icon: mdi:clock-fast
+    initial: 15
+  sunrise_hour:
+    name: Sunrise hour
+    options:
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 10
+    icon: mdi:clock-fast
+    initial: 6

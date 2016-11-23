@@ -20,8 +20,6 @@ history:
 logbook:
 #sun:
 
-emulated_hue:
-
 ##Setup MQTT
 mqtt:
   broker: m20.cloudmqtt.com
@@ -65,9 +63,9 @@ scene: !include scenes.yaml
 #############
 ## SCRIPTS ##
 #############
-script: !include scripts.yaml
+#script: !include scripts.yaml
 
 ################
 ## Automation ##
 ################
-automation: !include automations.yaml
+#automation: !include automations.yaml
