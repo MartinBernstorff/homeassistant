@@ -23,9 +23,17 @@ class CircadianSetter(appapi.AppDaemon):
 
         #Run every 2 minutes
         self.run_every(self.setlights, b, 120)
+
+        #Run when circadian switch is turned on
         self.listen_state(self.setlights, "input_boolean.circadian", new = "on")
-        self.listen_state(self.setlights_quick, "light.monitor", new = "on", old = "off")
+
+        #Run when bathroom is turned on
         self.listen_state(self.set_toilet, "light.bathroom", new = "on", old = "off")
+
+        #Run when monitor is turned on
+        self.listen_state(self.set_monitor_q, "light.monitor", new = "on", old = "off")
+        self.listen_state(self.set_loft_q, "light.monitor", new = "on", old = "off")
+        self.listen_state(self.set_reol_q, "light.monitor", new = "on", old = "off")
 
     def setlights(self, entity="", attribute="", old="", new="", kwargs=""):
         if self.get_state("input_boolean.circadian") == "on":
@@ -41,6 +49,28 @@ class CircadianSetter(appapi.AppDaemon):
 
         else:
             self.log("Circadian switch is off, lights not updated")
+
+    def set_monitor_q(self, entity="", attribute="", old="", new="", kwargs=""):
+        if self.get_state("input_boolean.circadian") == "on":
+            self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
+            self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
+            self.now = datetime.datetime.now()
+            self.setlight("light.monitor", 1, 1.4)
+
+    def set_reol_q(self, entity="", attribute="", old="", new="", kwargs=""):
+        if self.get_state("input_boolean.circadian") == "on":
+            self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
+            self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
+            self.now = datetime.datetime.now()
+            self.setlight("light.reol", 1, 0.4)
+
+    def set_loft_q(self, entity="", attribute="", old="", new="", kwargs=""):
+        if self.get_state("input_boolean.circadian") == "on":
+            self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
+            self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
+            self.now = datetime.datetime.now()
+            self.setlight("light.loft", 1, 0.6)
+
 
     def setlights_quick(self, entity="", attribute="", old="", new="", kwargs=""):
         if self.get_state("input_boolean.circadian") == "on":
