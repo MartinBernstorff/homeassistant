@@ -21,8 +21,7 @@ class Sunrise(appapi.AppDaemon):
         self.listen_state(self.update_time, "input_select.sunrise_minute")
 
         #Set sunrise time
-        time = datetime.time(int(self.hour), int(self.minute), 0)
-        self.run_daily(self.rise, time)
+
 
     def rise(self, entity="", attribute="", old="", new="", kwargs=""):
         #Make short corner light var
@@ -52,3 +51,6 @@ class Sunrise(appapi.AppDaemon):
         self.hour = self.get_state("input_select.sunrise_hour")
         self.minute = self.get_state("input_select.sunrise_minute")
         self.log("Time set to {}:{}".format(self.hour, self.minute))
+        time = datetime.time(int(self.hour), int(self.minute), 0)
+        self.cancel_timer(self.sunrise)
+        self.sunrise = self.run_daily(self.rise, time)
