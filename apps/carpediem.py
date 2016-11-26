@@ -42,6 +42,7 @@ class CarpeDiem(appapi.AppDaemon):
         self.setstate(cl, 150, 60, [ 0.674, 0.322 ]) #Red initial
         self.setstate(cl, circadian_gen.CircadianGen.get_circ_brightness(self), 600, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
         self.turn_on("input_boolean.circadian") #Turn back on circadian
+        self.turn_off(self.args["switch"])
 
     def carpebathroom(self, entity, attribute, old, new, kwargs):
         #Setup circadian dependencies
