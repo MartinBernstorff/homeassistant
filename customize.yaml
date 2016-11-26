@@ -1,12 +1,14 @@
     switch.benq:
       icon: mdi:projector
-    input_boolean.carpediem:
-      #echo: true
+
+    #Switches
+    switch.bed_black:
+      hidden: false
     #HIDE
     media_player.martins_iphone_2:
       hidden: true
     media_player.rasplex:
-      hidden: false
+      hidden: true
     media_player.martins_macbook_air:
       hidden: true
     media_player.plex_web_safari:

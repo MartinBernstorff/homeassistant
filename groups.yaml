@@ -20,3 +20,9 @@
       - switch.benq
       - media_player.pioneer
       - media_player.rasplex
+  sensors:
+    name: Sensors
+    icon: mdi:developer-board
+    entities:
+      - sensor.temperature
+      - sensor.humidity
