@@ -2,6 +2,7 @@
     name: Carpe diem duration
     options:
       - 1%
+      - 10%
       - 50%
       - 75%
       - 100%

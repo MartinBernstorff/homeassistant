@@ -1,7 +1,9 @@
-  python-testing:
-    name: Python testing
+  testing:
+    name: Testing
     icon: mdi:developer-board
     entities:
+      - switch.bed_white
+      - switch.bed_black
 
   light_automation:
     name: Light automation

@@ -1,10 +1,22 @@
-    switch.benq:
-      icon: mdi:projector
+
 
     #Switches
+    switch.benq:
+      icon: mdi:projector
     switch.bed_black:
-      hidden: false
-    #HIDE
+      hidden: true
+    switch.bed_white:
+      hidden: true
+
+    #Sensors
+    sun.sun:
+      hidden: true
+    sensor.humidity:
+      hidden: true
+    sensor.temperature:
+      hidden: true
+
+    #Media players
     media_player.martins_iphone_2:
       hidden: true
     media_player.rasplex:
@@ -13,9 +25,9 @@
       hidden: true
     media_player.plex_web_safari:
       hidden: true
-    script.moviemode:
+    media_player.pioneer:
       hidden: true
-    scene.example:
-      hidden: true
-    sun.sun:
+
+    #Scenes
+    scene.unnamed_device:
       hidden: true

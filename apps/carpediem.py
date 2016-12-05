@@ -99,6 +99,8 @@ class CarpeDiem(appapi.AppDaemon):
 
         if self.factor_state == "1%":
             self.modulator = 0.01
+        if self.factor_state == "10%":
+            self.modulator = 0.1
         if self.factor_state == "50%":
             self.modulator = 0.5
         elif self.factor_state == "75%":

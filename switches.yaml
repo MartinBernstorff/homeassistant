@@ -11,3 +11,10 @@
     optimistic: true
     payload_on: "ON"
     payload_off: "OFF"
+  - platform: mqtt
+    name: bed_white
+    state_topic: "main/bed/white"
+    command_topic: "main/bed/white"
+    optimistic: true
+    payload_on: "ON"
+    payload_off: "OFF"
