@@ -20,17 +20,17 @@ class CircadianGen(appapi.AppDaemon):
 
 
     def get_circ_brightness(self, l=""):
-        t0 = self.now.replace(hour=5, minute=30, second=0)
-        t1 = self.now.replace(hour=7, minute=0, second=0)
+        t0 = self.now.replace(hour=5, minute=0, second=0)
+        t1 = self.now.replace(hour=6, minute=30, second=0)
         t2 = self.now.replace(hour=13, minute=0, second=0)
-        t3 = self.now.replace(hour=17, minute=30, second=0)
+        t3 = self.now.replace(hour=19, minute=30, second=0)
         t4 = self.now.replace(hour=21, minute=0, second=0)
-        t5 = self.now.replace(hour=21, minute=45, second=0)
+        t5 = self.now.replace(hour=21, minute=20, second=0)
 
         if self.now > t0 and self.now <= t1:
-            CircadianGen.set_circ_brightness(self, 1.3, 0, t1, t0)
+            CircadianGen.set_circ_brightness(self, 1.65, 0, t1, t0)
         elif self.now > t1 and self.now <= t2:
-            CircadianGen.set_circ_brightness(self, 2.5, 1.3, t2, t1)
+            CircadianGen.set_circ_brightness(self, 2.5, 1.65, t2, t1)
         elif self.now > t2 and self.now <= t3:
             self.brightness = 638
         elif self.now > t3 and self.now <= t4:
@@ -54,12 +54,12 @@ class CircadianGen(appapi.AppDaemon):
         self.brightness = (start + (end - start) * position / fadelength) * base
 
     def get_circ_hue(self, l=""):
-        t0 = self.now.replace(hour=5, minute=30, second=0)
+        t0 = self.now.replace(hour=5, minute=0, second=0)
         t1 = self.now.replace(hour=7, minute=0, second=0)
         t2 = self.now.replace(hour=13, minute=0, second=0)
         t3 = self.now.replace(hour=19, minute=0, second=0)
-        t4 = self.now.replace(hour=21, minute=0, second=0)
-        t5 = self.now.replace(hour=21, minute=30, second=0)
+        t4 = self.now.replace(hour=20, minute=30, second=0)
+        t5 = self.now.replace(hour=21, minute=20, second=0)
 
         if self.now > t0 and self.now <= t1:
             CircadianGen.set_circ_colortemp(self, 0.4255, 0.5268, 0.3998, 0.4133, t1, t0)
@@ -70,9 +70,9 @@ class CircadianGen(appapi.AppDaemon):
         elif self.now > t3 and self.now <= t4:
             CircadianGen.set_circ_colortemp(self, 0.5268, 0.4255, 0.4133, 0.3998, t4, t3)
         elif self.now > t4 and self.now <= t5:
-            CircadianGen.set_circ_colortemp(self, 0.5951, 0.5268, 0.322, 0.4133, t5, t4)
+            CircadianGen.set_circ_colortemp(self, 0.704, 0.5268, 0.296, 0.4133, t5, t4)
         else:
-            self.colortemp = [ 0.674, 0.322 ]
+            self.colortemp = [ 0.704, 0.296 ]
 
         return self.colortemp
 
