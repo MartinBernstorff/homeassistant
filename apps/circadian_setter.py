@@ -21,8 +21,8 @@ class CircadianSetter(appapi.AppDaemon):
 
         self.log("{} initiated".format(__name__))
 
-        #Run every 2 minutes
-        self.run_every(self.setlights, b, 120)
+        #Run every 4 minutes
+        self.run_every(self.setlights, b, 240)
 
         #Run when circadian switch is turned on
         self.listen_state(self.setlights, "input_boolean.circadian", new = "on")
@@ -39,9 +39,9 @@ class CircadianSetter(appapi.AppDaemon):
             self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
             self.now = datetime.datetime.now()
 
-            self.setlight("light.monitor", 30, 1.4)
-            self.setlight("light.reol", 30, 0.4)
-            self.setlight("light.loft", 30, 0.6)
+            self.setlight("light.monitor", 240, 1.4)
+            self.setlight("light.reol", 240, 0.4)
+            self.setlight("light.loft", 240, 0.6)
 
             #self.log("Updating lights, time is {}, color temp is {} and brightness is {}".format(self.now.time(), self.hue, self.brightness))
 

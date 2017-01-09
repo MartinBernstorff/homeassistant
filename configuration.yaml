@@ -15,9 +15,6 @@ http:
   # api_password: PASSWORD
 discovery:
 
-influxdb:
-  host: 127.0.0.1
-
 #updater:
 history:
 logbook:

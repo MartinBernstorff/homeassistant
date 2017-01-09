@@ -39,6 +39,7 @@ class CarpeDiem(appapi.AppDaemon):
         self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
         cl = "light.monitor"
         self.turn_off("input_boolean.circadian") #Turn off circadian temporarily
+        self.turn_off("input_boolean.sunrise") #Turn off sunrise if it's still on
         self.setstate(cl, 150, 60, [ 0.674, 0.322 ]) #Red initial
         self.setstate(cl, circadian_gen.CircadianGen.get_circ_brightness(self), 600, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
         self.turn_on("input_boolean.circadian") #Turn back on circadian
@@ -62,8 +63,8 @@ class CarpeDiem(appapi.AppDaemon):
         #Make short reol light var
         rl = "light.reol"
 
-        time.sleep(self.modulator * 300)
-        self.setstate(rl, circadian_gen.CircadianGen.get_circ_brightness(self), 300, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
+        time.sleep(self.modulator * 400)
+        self.setstate(rl, circadian_gen.CircadianGen.get_circ_brightness(self), 600, circadian_gen.CircadianGen.get_circ_hue(self)) #Circadian hue
 
     def carpeloft(self, entity, attribute, old, new, kwargs):
         #Setup circadian dependencies
