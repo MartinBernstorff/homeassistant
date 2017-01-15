@@ -15,17 +15,22 @@ class CircadianGen(appapi.AppDaemon):
         self.now = datetime.datetime.now()
         b = self.now + datetime.timedelta(0, 3)
 
+        #Setup the input_selects
+        self.update_time()
+        self.listen_state(self.update_time, "input_select.circadian_hour")
+        self.listen_state(self.update_time, "input_select.circadian_minute")
+
         #Set time intervals
         self.now = datetime.datetime.now()
 
 
     def get_circ_brightness(self, l=""):
-        t0 = self.now.replace(hour=5, minute=0, second=0)
-        t1 = self.now.replace(hour=6, minute=30, second=0)
-        t2 = self.now.replace(hour=13, minute=0, second=0)
-        t3 = self.now.replace(hour=19, minute=30, second=0)
-        t4 = self.now.replace(hour=21, minute=0, second=0)
-        t5 = self.now.replace(hour=21, minute=20, second=0)
+        t0 = self.now.replace(hour=5 + self.hour, minute=0 + self.minute, second=0)
+        t1 = self.now.replace(hour=6 + self.hour, minute=0 + self.minute, second=0)
+        t2 = self.now.replace(hour=13 + self.hour, minute=0 + self.minute, second=0)
+        t3 = self.now.replace(hour=19 + self.hour, minute=0 + self.minute, second=0)
+        t4 = self.now.replace(hour=21 + self.hour, minute=0 + self.minute, second=0)
+        t5 = self.now.replace(hour=21 + self.hour, minute=0 + self.minute, second=0)
 
         if self.now > t0 and self.now <= t1:
             CircadianGen.set_circ_brightness(self, 1.65, 0, t1, t0)
@@ -54,12 +59,12 @@ class CircadianGen(appapi.AppDaemon):
         self.brightness = (start + (end - start) * position / fadelength) * base
 
     def get_circ_hue(self, l=""):
-        t0 = self.now.replace(hour=5, minute=0, second=0)
-        t1 = self.now.replace(hour=7, minute=0, second=0)
-        t2 = self.now.replace(hour=13, minute=0, second=0)
-        t3 = self.now.replace(hour=19, minute=0, second=0)
-        t4 = self.now.replace(hour=20, minute=30, second=0)
-        t5 = self.now.replace(hour=21, minute=20, second=0)
+        t0 = self.now.replace(hour=4 + self.hour, minute=0 + self.minute, second=0)
+        t1 = self.now.replace(hour=5 + self.hour, minute=0 + self.minute, second=0)
+        t2 = self.now.replace(hour=13 + self.hour, minute=0 + self.minute, second=0)
+        t3 = self.now.replace(hour=19 + self.hour, minute=0 + self.minute, second=0)
+        t4 = self.now.replace(hour=20 + self.hour, minute=0 + self.minute, second=0)
+        t5 = self.now.replace(hour=21 + self.hour, minute=0 + self.minute, second=0)
 
         if self.now > t0 and self.now <= t1:
             CircadianGen.set_circ_colortemp(self, 0.4255, 0.5268, 0.3998, 0.4133, t1, t0)
@@ -86,6 +91,11 @@ class CircadianGen(appapi.AppDaemon):
         self.y_now = start_y + (end_y - start_y) * position / fadelength
 
         self.colortemp = [ self.x_now, self.y_now]
+
+    def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.hour = int(self.get_state("input_select.circadian_hour"))
+        self.minute = int(self.get_state("input_select.circadian_minute"))
+        self.log("Circadian time offset set to {}:{}".format(self.hour, self.minute))
 
 """
 [ 0.674, 0.322 ] #Red initial

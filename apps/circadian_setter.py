@@ -16,6 +16,11 @@ class CircadianSetter(appapi.AppDaemon):
         self.now = datetime.datetime.now()
         b = self.now + datetime.timedelta(0, 3)
 
+        #Setup the input_selects
+        self.update_time()
+        self.listen_state(self.update_time, "input_select.circadian_hour")
+        self.listen_state(self.update_time, "input_select.circadian_minute")
+
         self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
         self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
 
@@ -30,7 +35,7 @@ class CircadianSetter(appapi.AppDaemon):
         #Run when bathroom is turned on
         self.listen_state(self.set_toilet, "light.bathroom", new = "on", old = "off")
 
-        #Run when monitor is turned on
+        #Run when monitor is turned on or circadian offset is changed
         self.listen_state(self.set_lights_quick, "light.monitor", new = "on", old = "off")
 
     def setlights(self, entity="", attribute="", old="", new="", kwargs=""):
@@ -76,3 +81,8 @@ class CircadianSetter(appapi.AppDaemon):
     def setlight(self, light, transition, modifier):
         if self.get_state(light) == "on":
             self.turn_on(light, transition = transition, xy_color = circadian_gen.CircadianGen.get_circ_hue(self), brightness = modifier * circadian_gen.CircadianGen.get_circ_brightness(self))
+
+    def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.hour = int(self.get_state("input_select.circadian_hour"))
+        self.minute = int(self.get_state("input_select.circadian_minute"))
+        self.log("Circadian time offset set to {}:{}".format(self.hour, self.minute))
