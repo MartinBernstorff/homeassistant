@@ -27,8 +27,8 @@ class CircadianGen(appapi.AppDaemon):
         self.listen_state(self.gen_circ_brightness, "input_select.circadian_minute")
 
         #Setup run_every
-        self.run_every(self.gen_circ_brightness, b, 4 * 60)
-        self.run_every(self.gen_circ_colortemp, b, 4 * 60)
+        self.run_every(self.gen_circ_brightness, b, 60)
+        self.run_every(self.gen_circ_colortemp, b, 60)
 
     def gen_circ_brightness(self, entity="", attribute="", old="", new="", kwargs=""):
         t0 = self.now.replace(hour=5, minute=0, second=0) + self.global_vars["c_offset"]
