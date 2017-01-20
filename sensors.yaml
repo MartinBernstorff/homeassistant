@@ -1,8 +1,0 @@
-  - platform: mqtt
-    name: temperature
-    state_topic: "main/bed/temperature"
-    unit_of_measurement: "C"
-  - platform: mqtt
-    name: humidity
-    state_topic: "main/bed/humidity"
-    unit_of_measurement: "%"

@@ -31,3 +31,24 @@
       - 10
     icon: mdi:clock-fast
     initial: 6
+  circadian_minute:
+    name: Circadian minute offset
+    options:
+      - 0
+      - 15
+      - 30
+      - 45
+    icon: mdi:clock-fast
+    initial: 0
+  circadian_hour:
+    name: Circadian hour offset
+    options:
+      - -3
+      - -2
+      - -1
+      - 0
+      - +1
+      - +2
+      - +3
+    icon: mdi:clock-fast
+    initial: 0

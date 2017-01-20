@@ -19,6 +19,7 @@ class CarpeDiem(appapi.AppDaemon):
 
         #Update factor
         self.updatefactor()
+        self.update_time()
         self.listen_state(self.updatefactor, self.args["factor"])
 
         #Register callback for switch turning on
@@ -115,3 +116,8 @@ class CarpeDiem(appapi.AppDaemon):
 
     def reset(self, entity="", attribute="", old="", new="", kwargs=""):
         self.turn_off(self.args["switch"])
+
+    def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.hour = int(self.get_state("input_select.circadian_hour"))
+        self.minute = int(self.get_state("input_select.circadian_minute"))
+        self.log("Circadian time offset set to {}:{}".format(self.hour, self.minute))
