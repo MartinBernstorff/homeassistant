@@ -24,10 +24,6 @@ class MovieMode(appapi.AppDaemon):
 
     def on(self, entity, attribute, old, new, kwargs):
         #Initiating circadin
-        self.now = datetime.datetime.now()
-        self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
-        self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
-
         self.log("Moviemode on!")
         self.turn_off("input_boolean.circadian") #Turn off circadian temporarily
         if self.get_state("media_player.pioneer") == "off":
@@ -40,9 +36,9 @@ class MovieMode(appapi.AppDaemon):
         elif self.get_state("media_player.pioneer") == "on":
             self.log("Receiver is already on, proceding")
 
-        self.setstate("light.monitor", self.brightness * 0.5, 10)
+        self.setstate("light.monitor", self.global_vars["c_brightness"] * 0.5, 10)
         self.setstate("light.loft", 0, 8)
-        self.setstate("light.reol", self.brightness * 0.2, 13)
+        self.setstate("light.reol", self.global_vars["c_brightness"] * 0.2, 13)
 
         #self.turn_on("script.moviemode")
 
@@ -75,14 +71,9 @@ class MovieMode(appapi.AppDaemon):
         self.turn_off("light.hallway")
 
     def off(self, entity, attribute, old, new, kwargs):
-        #Setup circadian dependencies
-        self.now = datetime.datetime.now()
-        self.hue = circadian_gen.CircadianGen.get_circ_hue(self)
-        self.brightness = circadian_gen.CircadianGen.get_circ_brightness(self)
-
-        self.setstate("light.monitor", self.brightness, 80, self.hue)
-        self.setstate("light.reol", self.brightness, 80, self.hue)
-        self.setstate("light.loft", self.brightness, 80, self.hue)
+        self.setstate("light.monitor", self.global_vars["c_brightness"], 80, self.global_vars["c_colortemp"])
+        self.setstate("light.reol", self.global_vars["c_brightness"], 80, self.global_vars["c_colortemp"])
+        self.setstate("light.loft", self.global_vars["c_brightness"], 80, self.global_vars["c_colortemp"])
 
         vollevel = self.get_state("media_player.pioneer", "volume_level")
 

@@ -83,7 +83,7 @@ class CircadianGen(appapi.AppDaemon):
         else:
             self.global_vars["c_colortemp"] = [ 0.704, 0.296 ]
 
-        #self.log("Set new circ brightness {} at {}".format(self.brightness, self.now))
+        #self.log("Set new circ brightness {} at {}".format(self.global_vars["c_brightness"], self.time()))
 
     def set_circ_colortemp(self, end_x, start_x, end_y, start_y, endtime, starttime):
         fadelength = (endtime-starttime).seconds
