@@ -2,13 +2,15 @@ import appdaemon.appapi as appapi
 import time
 import datetime
 
-#
-# Carpediem app
-#
-# Args:
-#   switch: The switch that's required for the script to run
+"""
+ Off_scheduler
 
-class off_scheduler(appapi.AppDaemon):
+ Args:
+   switch: The switch that's required for the script to run
+   entity: The entity to be controlled
+"""
+
+class OffScheduler(appapi.AppDaemon):
 
     def initialize(self, entity="", attribute="", old="", new="", kwargs=""):
 
@@ -38,17 +40,20 @@ class off_scheduler(appapi.AppDaemon):
                 if device == "light":
                     self.light_off()
                 else:
-                    self.turn_off(self.args["entity"])
+                    self.turn_off(self.entity)
         else:
             if device == "light":
-                self.light_off()
+                if self.get_state(self.entity) == "on":
+                    self.turn_on(self.entity, transition = 30, xy_color = self.global_vars["c_colortemp"], brightness = 0)
+                    time.sleep(30)
+                    self.turn_off(self.entity)
+                else:
+                    self.turn_off(self.entity)
             else:
-                self.turn_off(self.args["entity"])
+                self.turn_off(self.entity)
 
     def light_off(self):
-            self.turn_on(self.entity, transition = 30, xy_color = self.global_vars["c_colortemp"], brightness = 0)
-            time.sleep(30)
-            self.turn_off(self.entity)
+            s
 
     def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
         self.cancel_timer(self.handle)
