@@ -8,7 +8,6 @@ import datetime
 #
 
 class MovieModePlayPause(appapi.AppDaemon):
-
     def initialize(self):
         self.log("Initializing {}".format(__name__))
 
@@ -17,20 +16,20 @@ class MovieModePlayPause(appapi.AppDaemon):
         self.listen_state(self.on, "media_player.rasplex", new="playing")
         self.listen_state(self.off, "media_player.rasplex", new="paused")
     def on(self, entity, attribute, old, new, kwargs):
-        #self.log("Playing! at {}".format(self.time()))
+        self.log("Playing! at {}".format(self.time()))
 
-        self.turn_off("light.monitor")
         self.turn_off("light.reol")
+        self.turn_off("light.monitor")
         self.turn_off("light.loft")
         self.turn_off("light.hallway")
 
     def off(self, entity, attribute, old, new, kwargs):
-        #self.log("Paused! at {}".format(self.time()))
+        self.log("Paused! at {}".format(self.time()))
 
         #Setup circadian dependencies
         self.setstate("light.monitor", 100, 10, self.global_vars["c_colortemp"])
         time.sleep(5)
-        self.setstate("light.reol", self.global_vars["c_brightness"] * 0.2, 10, self.global_vars["c_colortemp"])
+        self.setstate("light.reol", 1, 10, self.global_vars["c_colortemp"])
 
     def setstate(self, lt, bness, fade, color=""):
         self.modulator = 1

@@ -22,7 +22,7 @@ class CircadianSetter(appapi.AppDaemon):
         self.run_every(self.set_lights, b, 240)
 
         #Run when circadian switch is turned on
-        self.listen_state(self.set_lights, "input_boolean.circadian", new = "on")
+        self.listen_state(self.set_lights_quick, "input_boolean.circadian", new = "on")
 
         #Run when bathroom is turned on
         self.listen_state(self.set_toilet, "light.bathroom", new = "on", old = "off")
@@ -33,6 +33,8 @@ class CircadianSetter(appapi.AppDaemon):
         #Run when offset is changed
         self.listen_state(self.set_lights_quick, "input_select.circadian_hour")
         self.listen_state(self.set_lights_quick, "input_select.circadian_minute")
+
+        self.set_lights_quick()
 
     def set_lights(self, entity="", attribute="", old="", new="", kwargs=""):
         if self.get_state("input_boolean.circadian") == "on":
@@ -45,7 +47,7 @@ class CircadianSetter(appapi.AppDaemon):
 
     def set_lights_quick(self, entity="", attribute="", old="", new="", kwargs=""):
         if self.get_state("input_boolean.circadian") == "on":
-            self.log("Updating lights quickly, time is {}, color temp is {} and brightness is {}".format(self.time(), self.global_vars["c_colortemp"], self.global_vars["c_brightness"]))
+            #self.log("Updating lights quickly, time is {}, color temp is {} and brightness is {}".format(self.time(), self.global_vars["c_colortemp"], self.global_vars["c_brightness"]))
             self.setlight("light.monitor", 5, 1.4)
             self.setlight("light.reol", 2, 0.4)
             self.setlight("light.loft", 1, 0.6)

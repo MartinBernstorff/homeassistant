@@ -26,7 +26,7 @@
     media_player.plex_web_safari:
       hidden: true
     media_player.pioneer:
-      hidden: true
+      hidden: false
 
     #Scenes
     scene.unnamed_device:
