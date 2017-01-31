@@ -25,8 +25,9 @@ class Sunrise(appapi.AppDaemon):
         self.listen_state(self.circadian_update_time, "input_select.circadian_hour")
         self.listen_state(self.circadian_update_time, "input_select.circadian_minute")
 
-        # self.listen_state(self.rise2, self.args["switch"], new = "on") # Callback for testing
+        self.listen_state(self.rise, self.args["switch"], new = "on") # Callback for testing
     def rise(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.modifier = 1
         self.turn_off("input_boolean.circadian")
         self.natural()
         self.turn_on("input_boolean.circadian")
@@ -84,11 +85,11 @@ class Sunrise(appapi.AppDaemon):
             if self.get_state(switch) == "on":
                 if device == "light":
                     if color is not None:
-                        self.turn_on(entity, brightness = brightness, transition = t_fade, xy_color = color)
-                        time.sleep(t_fade)
-                        time.sleep(post_delay)
+                        self.turn_on(entity, brightness = brightness, transition = t_fade * self.modifier, xy_color = color)
+                        time.sleep(t_fade * self.modifier)
+                        time.sleep(post_delay * self.modifier)
                     else:
-                        self.turn_on(entity, brightness = brightness, transition = t_fade)
-                        time.sleep(t_fade)
-                        time.sleep(post_delay)
+                        self.turn_on(entity, brightness = brightness, transition = t_fade * self.modifier)
+                        time.sleep(t_fade * self.modifier)
+                        time.sleep(post_delay * self.modifier)
                 self.turn_on(entity)
