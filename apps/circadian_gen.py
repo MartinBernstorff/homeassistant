@@ -16,9 +16,9 @@ class CircadianGen(appapi.AppDaemon):
         b = self.now + datetime.timedelta(seconds=3)
 
         #Setup the input_selects
-        self.update_time()
-        self.listen_state(self.update_time, "input_select.circadian_hour")
-        self.listen_state(self.update_time, "input_select.circadian_minute")
+        self.update_offset()
+        self.listen_state(self.update_offset, "input_select.circadian_hour")
+        self.listen_state(self.update_offset, "input_select.circadian_minute")
 
         self.listen_state(self.gen_circ_colortemp, "input_select.circadian_hour")
         self.listen_state(self.gen_circ_colortemp, "input_select.circadian_minute")
@@ -96,11 +96,17 @@ class CircadianGen(appapi.AppDaemon):
 
         self.global_vars["c_colortemp"] = [ self.x_now, self.y_now]
 
-    def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
+    def update_offset(self, entity="", attribute="", old="", new="", kwargs=""):
         self.hour = int(self.get_state("input_select.circadian_hour"))
         self.minute = int(self.get_state("input_select.circadian_minute"))
         self.global_vars["c_offset"] = datetime.timedelta(hours=self.hour, minutes=self.minute)
         self.log("Circadian_gen_updated time offset set to {}".format(self.global_vars["c_offset"]))
+        self.update_sunrise_time()
+
+    def update_sunrise_time(self):
+        self.sunrise = self.now.replace(hour=7, minute=30, second=0) + self.global_vars["c_offset"]
+        self.set_state("input_select.sunrise_hour", state = self.sunrise.hour)
+        self.set_state("input_select.sunrise_minute", state = self.sunrise.minute)
 
 """
 [ 0.674, 0.322 ] #Red initial
