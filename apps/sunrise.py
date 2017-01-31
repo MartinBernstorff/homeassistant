@@ -1,6 +1,9 @@
 import appdaemon.appapi as appapi
 import time
 import datetime
+from rgb_xy import Converter
+
+conv = Converter()
 
 #
 # Carpediem app
@@ -9,45 +12,22 @@ import datetime
 #   switch: The switch that initializes the script
 #   light: The light that's used for sunrise
 
-class Sunrise(appapi.AppDaemon):
 
+class Sunrise(appapi.AppDaemon):
     def initialize(self):
         self.log("Initializing sunrise")
-
-        #Setup the switch object
-        switch = self.args["switch"]
-        self.update_time()
+        self.switch = self.args["switch"] # The switch to turn on/off the sunrise
+        self.entity = "light.monitor" # The light to act as sun
+        self.update_time() # Get the current time-input
+        # Callbacks
         self.listen_state(self.update_time, "input_select.sunrise_hour")
         self.listen_state(self.update_time, "input_select.sunrise_minute")
 
-        #Set sunrise time
-
-
+        # self.listen_state(self.rise2, self.args["switch"], new = "on") # Callback for testing
     def rise(self, entity="", attribute="", old="", new="", kwargs=""):
-        #Make short corner light var
-        self.modulator = 1
         self.turn_off("input_boolean.circadian")
-        self.setstate("light.monitor", 1, 1, [ 0.674, 0.322 ])
-        self.setstate("light.monitor", 10, 1800, [ 0.674, 0.322 ])
-        self.setstate("light.monitor", 100, 1800, [ 0.5268, 0.4133 ])
+        self.natural()
         self.turn_on("input_boolean.circadian")
-
-
-    def setstate(self="", lt="", bness="", fade="", color="", post_delay=0):
-        switch = self.args["switch"]
-
-        if self.get_state(switch) == "on":
-            self.log("Set " + lt + " to fade in " + str(fade * self.modulator) + "s")
-
-            if color != "":
-                self.turn_on(lt, brightness = bness, transition = self.modulator * fade, xy_color = color)
-            else:
-                self.turn_on(lt, brightness = bness, transition = self.modulator * fade)
-
-            self.log("Sleeping for {}".format(int(self.modulator) * fade + post_delay))
-            time.sleep(self.modulator * fade + post_delay)
-        else:
-            self.log("Switch turned off, terminating")
 
     def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
         self.hour = self.get_state("input_select.sunrise_hour")
@@ -56,3 +36,45 @@ class Sunrise(appapi.AppDaemon):
         time = datetime.time(int(self.hour), int(self.minute), 0)
         self.cancel_timer(self.sunrise)
         self.sunrise = self.run_daily(self.rise, time)
+
+    #######################
+    # Different sequences #
+    #######################
+
+    def red_only(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=[0.674, 0.322])
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=10, t_fade=1800, color=[0.674, 0.322])
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=100, t_fade=1800, color=[0.5268, 0.4133])
+
+    def natural(self, entity="", attribute="", old="", new="", kwargs=""):
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=100, t_fade=1, color=conv.rgb_to_xy(255, 0, 0))
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=100, t_fade=180, color=conv.rgb_to_xy(255, 255, 255))
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=255, t_fade=1800, color=conv.rgb_to_xy(255, 255, 255))
+
+    def condseq_on(self, switch=None, entity=None, brightness=None, t_fade=0, color=None, post_delay=0):
+        """
+            A function for conditional sequentilization
+            Takes the following arguments:
+
+            switch: An input boolean that's conditional for the step to be executed
+            entity: The entity to be affected
+
+            If the entity is a light:
+            brightness: End brightness [0-255]
+            fade: How long the fade should take (in seconds)
+            color: End colour [X, Y]
+            post_delay: How long after the action there should be an additional delay (in seconds)
+        """
+        device, entity_id = self.split_entity(self.entity)
+        if switch is not None:
+            if self.get_state(switch) == "on":
+                if device == "light":
+                    if color is not None:
+                        self.turn_on(entity, brightness = brightness, transition = t_fade, xy_color = color)
+                        time.sleep(t_fade)
+                        time.sleep(post_delay)
+                    else:
+                        self.turn_on(entity, brightness = brightness, transition = t_fade)
+                        time.sleep(t_fade)
+                        time.sleep(post_delay)
+                self.turn_on(entity)
