@@ -46,8 +46,8 @@ class Sunrise(appapi.AppDaemon):
         """
         self.log("Updating sunrise time")
         self.now = datetime.datetime.now()
-        time.sleep(2)
-        self.sunrise = self.now.replace(hour=7, minute=30, second=0) + self.global_vars["c_offset"]
+        time.sleep(2) # Sleep for 2 seconds to make sure that c_offset has updated
+        self.sunrise = self.now.replace(hour=7, minute=0, second=0) + self.global_vars["c_offset"]
         self.set_state("input_select.sunrise_hour", state = self.sunrise.hour)
         self.set_state("input_select.sunrise_minute", state = self.sunrise.minute)
 
@@ -61,8 +61,8 @@ class Sunrise(appapi.AppDaemon):
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=100, t_fade=1800, color=[0.5268, 0.4133])
 
     def natural(self, entity="", attribute="", old="", new="", kwargs=""):
-        self.condseq_on(switch=self.switch, entity=self.entity, brightness=100, t_fade=1, color=conv.rgb_to_xy(255, 0, 0))
-        self.condseq_on(switch=self.switch, entity=self.entity, brightness=100, t_fade=180, color=conv.rgb_to_xy(255, 255, 255))
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 0, 0))
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=180, color=conv.rgb_to_xy(255, 255, 255))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=255, t_fade=1800, color=conv.rgb_to_xy(255, 255, 255))
 
     def condseq_on(self, switch=None, entity=None, brightness=None, t_fade=0, color=None, post_delay=0):
@@ -73,7 +73,7 @@ class Sunrise(appapi.AppDaemon):
             switch: An input boolean that's conditional for the step to be executed
             entity: The entity to be affected
 
-            If the entity is a light:
+            For lights:
             brightness: End brightness [0-255]
             fade: How long the fade should take (in seconds)
             color: End colour [X, Y]
