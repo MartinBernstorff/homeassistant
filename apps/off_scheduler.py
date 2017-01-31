@@ -43,17 +43,17 @@ class OffScheduler(appapi.AppDaemon):
                     self.turn_off(self.entity)
         else:
             if device == "light":
-                if self.get_state(self.entity) == "on":
-                    self.turn_on(self.entity, transition = 30, xy_color = self.global_vars["c_colortemp"], brightness = 0)
-                    time.sleep(30)
-                    self.turn_off(self.entity)
-                else:
-                    self.turn_off(self.entity)
+                self.light_off()
             else:
                 self.turn_off(self.entity)
 
-    def light_off(self):
-            s
+    def light_off(self, entity="", attribute="", old="", new="", kwargs=""):
+        if self.get_state(self.entity) == "on":
+            self.turn_on(self.entity, transition = 30, xy_color = self.global_vars["c_colortemp"], brightness = 0)
+            time.sleep(30)
+            self.turn_off(self.entity)
+        else:
+            self.turn_off(self.entity)
 
     def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
         self.cancel_timer(self.handle)
