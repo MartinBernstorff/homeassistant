@@ -22,6 +22,8 @@ class Sunrise(appapi.AppDaemon):
         # Callbacks
         self.listen_state(self.update_time, "input_select.sunrise_hour")
         self.listen_state(self.update_time, "input_select.sunrise_minute")
+        self.listen_state(self.circadian_update_time, "input_select.circadian_hour")
+        self.listen_state(self.circadian_update_time, "input_select.circadian_minute")
 
         # self.listen_state(self.rise2, self.args["switch"], new = "on") # Callback for testing
     def rise(self, entity="", attribute="", old="", new="", kwargs=""):
@@ -36,6 +38,18 @@ class Sunrise(appapi.AppDaemon):
         time = datetime.time(int(self.hour), int(self.minute), 0)
         self.cancel_timer(self.sunrise)
         self.sunrise = self.run_daily(self.rise, time)
+
+    def circadian_update_time(self, entity="", attribute="", old="", new="", kwargs=""):
+        """
+        Called when circadian offset is modified.
+        Sets new sunrise time.
+        """
+        self.log("Updating sunrise time")
+        self.now = datetime.datetime.now()
+        time.sleep(2)
+        self.sunrise = self.now.replace(hour=7, minute=30, second=0) + self.global_vars["c_offset"]
+        self.set_state("input_select.sunrise_hour", state = self.sunrise.hour)
+        self.set_state("input_select.sunrise_minute", state = self.sunrise.minute)
 
     #######################
     # Different sequences #

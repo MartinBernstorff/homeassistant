@@ -101,12 +101,6 @@ class CircadianGen(appapi.AppDaemon):
         self.minute = int(self.get_state("input_select.circadian_minute"))
         self.global_vars["c_offset"] = datetime.timedelta(hours=self.hour, minutes=self.minute)
         self.log("Circadian_gen_updated time offset set to {}".format(self.global_vars["c_offset"]))
-        self.update_sunrise_time()
-
-    def update_sunrise_time(self):
-        self.sunrise = self.now.replace(hour=7, minute=30, second=0) + self.global_vars["c_offset"]
-        self.set_state("input_select.sunrise_hour", state = self.sunrise.hour)
-        self.set_state("input_select.sunrise_minute", state = self.sunrise.minute)
 
 """
 [ 0.674, 0.322 ] #Red initial
