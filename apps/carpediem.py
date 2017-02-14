@@ -38,8 +38,9 @@ class CarpeDiem(appapi.AppDaemon):
         cl = "light.monitor"
         self.turn_off("input_boolean.circadian") #Turn off circadian temporarily
         self.turn_off("input_boolean.sunrise") #Turn off sunrise if it's still on
-        self.setstate(cl, 150, 60, [ 0.674, 0.322 ]) #Red initial
-        self.setstate(cl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
+        self.setstate(cl, brightness=1, fade=1, color=[ 0.674, 0.322 ])
+        self.setstate(cl, brightness=150, fade=60, color=self.global_vars["c_colortemp"]) #Red initial
+        self.setstate(cl, self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
         self.turn_on("input_boolean.circadian") #Turn back on circadian
         self.turn_off(self.args["switch"])
 
@@ -65,16 +66,16 @@ class CarpeDiem(appapi.AppDaemon):
         self.setstate(ll, self.global_vars["c_brightness"], 300, self.global_vars["c_colortemp"]) #Circadian hue
 
 
-    def setstate(self, lt, bness, fade, color=""):
+    def setstate(self, lt, brightness, fade, color=""):
         switch = self.args["switch"]
 
         if self.get_state(switch) == "on":
             self.log("Set " + lt + " to fade in " + str(fade * self.modulator) + "s")
 
             if color != "":
-                self.turn_on(lt, brightness = bness, transition = self.modulator * fade, xy_color = color)
+                self.turn_on(lt, brightness = brightness, transition = self.modulator * fade, xy_color = color)
             else:
-                self.turn_on(lt, brightness = bness, transition = self.modulator * fade)
+                self.turn_on(lt, brightness = brightness, transition = self.modulator * fade)
 
 
             time.sleep(self.modulator * fade)
