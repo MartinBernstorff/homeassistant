@@ -23,42 +23,46 @@ class CarpeDiem(appapi.AppDaemon):
         self.listen_state(self.updatefactor, self.args["factor"])
 
         #Register callback for switch turning on
-        self.listen_state(self.carpecorner, switch, new = "on")
-        self.listen_state(self.carpereol, switch, new = "on")
-        self.listen_state(self.carpebathroom, switch, new = "on")
-        self.listen_state(self.carpeloft, switch, new = "on")
+        self.listen_state(self.carpe_monitor, switch, new = "on")
+        self.listen_state(self.carpe_reol, switch, new = "on")
+        self.listen_state(self.carpe_bathroom, switch, new = "on")
+        self.listen_state(self.carpe_loft, switch, new = "on")
 
         #Reset the switch at 20:00 each day
         time = datetime.time(20, 0, 0)
         self.run_daily(self.reset, time)
 
-    def carpecorner(self, entity, attribute, old, new, kwargs):
+    def carpe_monitor(self, entity, attribute, old, new, kwargs):
         #Make short corner light var
         #Setup circadian dependencies
         cl = "light.monitor"
         self.turn_off("input_boolean.circadian") #Turn off circadian temporarily
         self.turn_off("input_boolean.sunrise") #Turn off sunrise if it's still on
-        self.setstate(cl, brightness=1, fade=1, color=[ 0.674, 0.322 ])
-        self.setstate(cl, brightness=150, fade=60, color=self.global_vars["c_colortemp"]) #Red initial
+        if self.get_state(cl, "brightness") is None:
+            self.setstate(cl, brightness=1, fade=1, color=[ 0.674, 0.322 ]) #Red initial
+            self.setstate(cl, brightness=60, fade=60, color=self.global_vars["c_colortemp"])
+        elif self.get_state(cl, "brightness") < 60:
+            self.setstate(cl, brightness=60, fade=60, color=self.global_vars["c_colortemp"])
         self.setstate(cl, self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
         self.turn_on("input_boolean.circadian") #Turn back on circadian
         self.turn_off(self.args["switch"])
 
-    def carpebathroom(self, entity, attribute, old, new, kwargs):
+    def carpe_bathroom(self, entity, attribute, old, new, kwargs):
         #Setup circadian dependencies
         #Make short bathroom light var
         bl = "light.bathroom"
-        self.setstate(bl, 150, 60, [ 0.674, 0.322 ])
+        self.setstate(bl, brightness=1, fade=1, color=[ 0.674, 0.322 ]) #Red initial
+        self.setstate(bl, 150, 60, self.global_vars["c_colortemp"])
         self.setstate(bl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
 
-    def carpereol(self, entity, attribute, old, new, kwargs):
+    def carpe_reol(self, entity, attribute, old, new, kwargs):
         #Make short reol light var
         rl = "light.reol"
 
         time.sleep(self.modulator * 400)
         self.setstate(rl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
 
-    def carpeloft(self, entity, attribute, old, new, kwargs):
+    def carpe_loft(self, entity, attribute, old, new, kwargs):
         #Make short reol light var
         ll = "light.loft"
 
