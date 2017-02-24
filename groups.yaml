@@ -4,11 +4,6 @@
     entities:
       - switch.bed_white
       - switch.bed_black
-  morning:
-    name: Morning
-    entities:
-      - input_boolean.carpediem
-      - input_select.carpediemfactor
   light_automation:
     name: Light automation
     entities:
@@ -32,3 +27,9 @@
     entities:
       - sensor.temperature
       - sensor.humidity
+  morning:
+    name: Morning & Evening
+    entities:
+      - input_boolean.carpediem
+      - input_select.carpediemfactor
+      - input_boolean.good_night

@@ -14,3 +14,6 @@
     name: Circadian
     icon: mdi:weather-night
     initial: on
+  good_night:
+    name: Good night script
+    initial: off

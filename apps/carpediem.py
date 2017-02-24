@@ -41,9 +41,12 @@ class CarpeDiem(appapi.AppDaemon):
         if self.get_state(cl, "brightness") is None:
             self.setstate(cl, brightness=1, fade=1, color=[ 0.674, 0.322 ]) #Red initial
             self.setstate(cl, brightness=60, fade=60, color=self.global_vars["c_colortemp"])
+            self.setstate(cl, self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
         elif self.get_state(cl, "brightness") < 60:
-            self.setstate(cl, brightness=60, fade=60, color=self.global_vars["c_colortemp"])
-        self.setstate(cl, self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
+            self.setstate(cl, brightness=60, fade=15, color=self.global_vars["c_colortemp"])
+            self.setstate(cl, self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state(cl, "brightness") > 60:
+            self.setstate(cl, self.global_vars["c_brightness"], 150, color=self.global_vars["c_colortemp"]) #Circadian hue
         self.turn_on("input_boolean.circadian") #Turn back on circadian
         self.turn_off(self.args["switch"])
 

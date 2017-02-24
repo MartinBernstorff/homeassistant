@@ -24,19 +24,20 @@ class Sunrise(appapi.AppDaemon):
         self.listen_state(self.update_time, "input_select.sunrise_minute")
         self.listen_state(self.circadian_update_time, "input_select.circadian_hour")
         self.listen_state(self.circadian_update_time, "input_select.circadian_minute")
+        # self.listen_state(self.rise, self.args["switch"], new = "on") # Callback for testing
 
-        self.listen_state(self.rise, self.args["switch"], new = "on") # Callback for testing
-    def rise(self, entity="", attribute="", old="", new="", kwargs=""):
+    def rise(self, entity="", attribute="", old="", new="", **kwargs):
         self.modifier = 1
         self.turn_off("input_boolean.circadian")
+        self.log("The sun is rising!")
         self.natural()
         self.turn_on("input_boolean.circadian")
 
     def update_time(self, entity="", attribute="", old="", new="", kwargs=""):
-        self.hour = self.get_state("input_select.sunrise_hour")
-        self.minute = self.get_state("input_select.sunrise_minute")
-        self.log("Time set to {}:{}".format(self.hour, self.minute))
-        time = datetime.time(int(self.hour), int(self.minute), 0)
+        self.input_hour = self.get_state("input_select.sunrise_hour")
+        self.input_minute = self.get_state("input_select.sunrise_minute")
+        self.log("Time set to {}:{}".format(self.input_hour, self.input_minute))
+        time = datetime.time(int(self.input_hour), int(self.input_minute), 0)
         self.cancel_timer(self.sunrise)
         self.sunrise = self.run_daily(self.rise, time)
 
@@ -61,7 +62,8 @@ class Sunrise(appapi.AppDaemon):
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=10, t_fade=1800, color=[0.674, 0.322])
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=100, t_fade=1800, color=[0.5268, 0.4133])
 
-    def natural(self, entity="", attribute="", old="", new="", kwargs=""):
+    def natural(self, entity="", attribute="", old="", new="", **kwargs):
+        self.log("Natural sunrise is running with switch {switch}, light {light} and modifier {modifier}".format(switch=self.switch, light=self.entity, modifier = self.modifier))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 0, 0))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=180, color=conv.rgb_to_xy(255, 255, 255))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=255, t_fade=1800, color=conv.rgb_to_xy(255, 255, 255))
