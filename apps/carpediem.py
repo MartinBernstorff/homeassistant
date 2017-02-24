@@ -35,18 +35,17 @@ class CarpeDiem(appapi.AppDaemon):
     def carpe_monitor(self, entity, attribute, old, new, kwargs):
         #Make short corner light var
         #Setup circadian dependencies
-        cl = "light.monitor"
         self.turn_off("input_boolean.circadian") #Turn off circadian temporarily
         self.turn_off("input_boolean.sunrise") #Turn off sunrise if it's still on
-        if self.get_state(cl, "brightness") is None:
-            self.setstate(cl, brightness=1, fade=1, color=[ 0.674, 0.322 ]) #Red initial
-            self.setstate(cl, brightness=60, fade=60, color=self.global_vars["c_colortemp"])
-            self.setstate(cl, self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
-        elif self.get_state(cl, "brightness") < 60:
-            self.setstate(cl, brightness=60, fade=15, color=self.global_vars["c_colortemp"])
-            self.setstate(cl, self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
-        elif self.get_state(cl, "brightness") > 60:
-            self.setstate(cl, self.global_vars["c_brightness"], 150, color=self.global_vars["c_colortemp"]) #Circadian hue
+        if self.get_state("light.monitor", "brightness") is None:
+            self.setstate("light.monitor", brightness=1, fade=1, color=[ 0.674, 0.322 ]) #Red initial
+            self.setstate("light.monitor", brightness=60, fade=60, color=self.global_vars["c_colortemp"])
+            self.setstate("light.monitor", self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state("light.monitor", "brightness") < 60:
+            self.setstate("light.monitor", brightness=60, fade=15, color=self.global_vars["c_colortemp"])
+            self.setstate("light.monitor", self.global_vars["c_brightness"], 600, color=self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state("light.monitor", "brightness") >= 60:
+            self.setstate("light.monitor", self.global_vars["c_brightness"], 150, color=self.global_vars["c_colortemp"]) #Circadian hue
         self.turn_on("input_boolean.circadian") #Turn back on circadian
         self.turn_off(self.args["switch"])
 
@@ -54,24 +53,41 @@ class CarpeDiem(appapi.AppDaemon):
         #Setup circadian dependencies
         #Make short bathroom light var
         bl = "light.bathroom"
-        self.setstate(bl, brightness=1, fade=1, color=[ 0.674, 0.322 ]) #Red initial
-        self.setstate(bl, 150, 60, self.global_vars["c_colortemp"])
-        self.setstate(bl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
+        if self.get_state("light.monitor", "brightness") is None:
+            self.setstate(bl, brightness=1, fade=1, color=[ 0.674, 0.322 ]) #Red initial
+            self.setstate(bl, 150, 60, self.global_vars["c_colortemp"])
+            self.setstate(bl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state("light.monitor", "brightness") < 60:
+            self.setstate(bl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state("light.monitor", "brightness") >= 60:
+            self.setstate(bl, 150, 60, self.global_vars["c_colortemp"])
+            self.setstate(bl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
 
     def carpe_reol(self, entity, attribute, old, new, kwargs):
         #Make short reol light var
         rl = "light.reol"
-
-        time.sleep(self.modulator * 400)
-        self.setstate(rl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
+        if self.get_state("light.monitor", "brightness") is None:
+            time.sleep(self.modulator * 400)
+            self.setstate(rl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state("light.monitor", "brightness") < 60:
+            time.sleep(self.modulator * 400)
+            self.setstate(rl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state("light.monitor", "brightness") >= 60:
+            time.sleep(self.modulator * 30)
+            self.setstate(rl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
 
     def carpe_loft(self, entity, attribute, old, new, kwargs):
         #Make short reol light var
         ll = "light.loft"
-
-        time.sleep(self.modulator * 600)
-        self.setstate(ll, self.global_vars["c_brightness"], 300, self.global_vars["c_colortemp"]) #Circadian hue
-
+        if self.get_state("light.monitor", "brightness") is None:
+            time.sleep(self.modulator * 600)
+            self.setstate(ll, self.global_vars["c_brightness"], 300, self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state("light.monitor", "brightness") < 60:
+            time.sleep(self.modulator * 600)
+            self.setstate(ll, self.global_vars["c_brightness"], 300, self.global_vars["c_colortemp"]) #Circadian hue
+        elif self.get_state("light.monitor", "brightness") >= 60:
+            time.sleep(self.modulator * 60)
+            self.setstate(ll, self.global_vars["c_brightness"], 300, self.global_vars["c_colortemp"]) #Circadian hue
 
     def setstate(self, lt, brightness, fade, color=""):
         switch = self.args["switch"]
@@ -83,7 +99,6 @@ class CarpeDiem(appapi.AppDaemon):
                 self.turn_on(lt, brightness = brightness, transition = self.modulator * fade, xy_color = color)
             else:
                 self.turn_on(lt, brightness = brightness, transition = self.modulator * fade)
-
 
             time.sleep(self.modulator * fade)
         else:
