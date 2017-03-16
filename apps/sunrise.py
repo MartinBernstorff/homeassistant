@@ -17,16 +17,20 @@ class Sunrise(appapi.AppDaemon):
     def initialize(self):
         self.log("Initializing sunrise")
         self.switch = self.args["switch"] # The switch to turn on/off the sunrise
-        self.entity = "light.monitor" # The light to act as sun
+        self.entity = "light.bathroom" # The light to act as sun
+
+        """
+        Disabled for now, no need for timer as SleepAsAndroid is launching
+
         self.update_time() # Get the current time-input
-        # Callbacks
         self.listen_state(self.update_time, "input_select.sunrise_hour")
         self.listen_state(self.update_time, "input_select.sunrise_minute")
         self.listen_state(self.circadian_update_time, "input_select.circadian_hour")
         self.listen_state(self.circadian_update_time, "input_select.circadian_minute")
-        # self.listen_state(self.rise, self.args["switch"], new = "on") # Callback for testing
+        """
+        self.listen_state(self.rise, self.args["switch"], new = "on") # Callback for testing
 
-    def rise(self, entity="", attribute="", old="", new="", **kwargs):
+    def rise(self, entity="", attribute="", old="", new="", kwargs=""):
         self.modifier = 1
         self.turn_off("input_boolean.circadian")
         self.log("The sun is rising!")
@@ -50,8 +54,8 @@ class Sunrise(appapi.AppDaemon):
         self.now = datetime.datetime.now()
         time.sleep(2) # Sleep for 2 seconds to make sure that c_offset has updated
         self.sunrise = self.now.replace(hour=7, minute=0, second=0) + self.global_vars["c_offset"]
-        self.set_state("input_select.sunrise_hour", state = self.sunrise.hour)
-        self.set_state("input_select.sunrise_minute", state = self.sunrise.minute)
+        self.set_state("input_select.sunrise_hour", state=self.sunrise.hour)
+        self.set_state("input_select.sunrise_minute", state=self.sunrise.minute)
 
     #######################
     # Different sequences #
@@ -62,11 +66,11 @@ class Sunrise(appapi.AppDaemon):
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=10, t_fade=1800, color=[0.674, 0.322])
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=100, t_fade=1800, color=[0.5268, 0.4133])
 
-    def natural(self, entity="", attribute="", old="", new="", **kwargs):
+    def natural(self, entity="", attribute="", old="", new="", kwargs=""):
         self.log("Natural sunrise is running with switch {switch}, light {light} and modifier {modifier}".format(switch=self.switch, light=self.entity, modifier = self.modifier))
-        self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 0, 0))
-        self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=180, color=conv.rgb_to_xy(255, 255, 255))
-        self.condseq_on(switch=self.switch, entity=self.entity, brightness=255, t_fade=1800, color=conv.rgb_to_xy(255, 255, 255))
+        # self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 0, 0))
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=60, color=conv.rgb_to_xy(255, 255, 255))
+        self.condseq_on(switch=self.switch, entity=self.entity, brightness=255, t_fade=1620, color=conv.rgb_to_xy(255, 255, 255))
 
     def condseq_on(self, switch=None, entity=None, brightness=None, t_fade=0, color=None, post_delay=0):
         """
