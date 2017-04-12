@@ -40,9 +40,9 @@ class CircadianGen(appapi.AppDaemon):
         t5 = self.now.replace(hour=21, minute=15, second=0) + self.global_vars["c_offset"]
 
         if self.now > t0 and self.now <= t1:
-            self.set_circ_brightness(1.65, 0, t1, t0)
+            self.set_circ_brightness(2.65, 0, t1, t0)
         elif self.now > t1 and self.now <= t2:
-            self.set_circ_brightness(2.5, 1.65, t2, t1)
+            self.set_circ_brightness(2.5, 2.65, t2, t1)
         elif self.now > t2 and self.now <= t3:
             self.global_vars["c_brightness"] = 638
         elif self.now > t3 and self.now <= t4:
@@ -65,8 +65,8 @@ class CircadianGen(appapi.AppDaemon):
 
     def gen_circ_colortemp(self, entity="", attribute="", old="", new="", kwargs=""):
         self.now = self.datetime()
-        t0 = self.now.replace(hour=4, minute=0, second=0) + self.global_vars["c_offset"]
-        t1 = self.now.replace(hour=5, minute=0, second=0) + self.global_vars["c_offset"]
+        t0 = self.now.replace(hour=0, minute=0, second=0) + self.global_vars["c_offset"]
+        t1 = self.now.replace(hour=0, minute=01, second=0) + self.global_vars["c_offset"]
         t2 = self.now.replace(hour=13, minute=0, second=0) + self.global_vars["c_offset"]
         t3 = self.now.replace(hour=19, minute=0, second=0) + self.global_vars["c_offset"]
         t4 = self.now.replace(hour=20, minute=45, second=0) + self.global_vars["c_offset"]
