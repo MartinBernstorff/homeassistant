@@ -29,7 +29,7 @@ class Sunrise(appapi.AppDaemon):
         self.modifier = 1
         self.turn_off("input_boolean.circadian")
         self.log("The sun is rising in 45 mins!")
-        self.sunrise_timer = self.run_in(self.natural, 2700)
+        self.sunrise_timer = self.run_in(self.natural, 2400)
 
 
     #######################
@@ -45,6 +45,7 @@ class Sunrise(appapi.AppDaemon):
     def natural(self, *args, **kwargs):
         self.log("Natural sunrise is running with switch {switch}, light {light} and modifier {modifier}".format(switch=self.switch, light=self.entity, modifier = self.modifier))
         # self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 0, 0))
+        self.condseq_on(switch=self.switch, entity="light.monitor", brightness=5, t_fade=300, color=conv.rgb_to_xy(255, 255, 255))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 255, 255))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=899, color=conv.rgb_to_xy(255, 255, 255))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=255, t_fade=900, color=conv.rgb_to_xy(255, 255, 255))
