@@ -45,7 +45,9 @@ class Sunrise(appapi.AppDaemon):
     def natural(self, *args, **kwargs):
         self.log("Natural sunrise is running with switch {switch}, light {light} and modifier {modifier}".format(switch=self.switch, light=self.entity, modifier = self.modifier))
         # self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 0, 0))
-        self.condseq_on(switch=self.switch, entity="light.monitor", brightness=5, t_fade=300, color=conv.rgb_to_xy(255, 255, 255))
+        self.condseq_on(switch=self.switch, entity="light.monitor", brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 255, 255))
+        self.condseq_on(switch=self.switch, entity="light.monitor", brightness=1, t_fade=500, color=conv.rgb_to_xy(255, 255, 255))
+        self.condseq_on(switch=self.switch, entity="light.monitor", brightness=15, t_fade=400, color=conv.rgb_to_xy(255, 255, 255))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=1, color=conv.rgb_to_xy(255, 255, 255))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=1, t_fade=899, color=conv.rgb_to_xy(255, 255, 255))
         self.condseq_on(switch=self.switch, entity=self.entity, brightness=255, t_fade=900, color=conv.rgb_to_xy(255, 255, 255))
