@@ -66,7 +66,7 @@ class CircadianGen(appapi.AppDaemon):
     def gen_circ_colortemp(self, entity="", attribute="", old="", new="", kwargs=""):
         self.now = self.datetime()
         t0 = self.now.replace(hour=0, minute=0, second=0) + self.global_vars["c_offset"]
-        t1 = self.now.replace(hour=0, minute=01, second=0) + self.global_vars["c_offset"]
+        t1 = self.now.replace(hour=0, minute=1, second=0) + self.global_vars["c_offset"]
         t2 = self.now.replace(hour=13, minute=0, second=0) + self.global_vars["c_offset"]
         t3 = self.now.replace(hour=19, minute=0, second=0) + self.global_vars["c_offset"]
         t4 = self.now.replace(hour=20, minute=45, second=0) + self.global_vars["c_offset"]

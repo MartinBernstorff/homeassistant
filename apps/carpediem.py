@@ -53,13 +53,13 @@ class CarpeDiem(appapi.AppDaemon):
         #Setup circadian dependencies
         #Make short bathroom light var
         bl = "light.bathroom"
-        if self.get_state("light.monitor", "brightness") is None:
-            self.setstate(bl, brightness=1, fade=1, color=[ 0.674, 0.322 ]) #Red initial
+        if self.get_state("light.bathroom", "brightness") is None:
+            self.setstate(bl, brightness=1, fade=1, color=self.global_vars["c_colortemp"]) #Red initial
             self.setstate(bl, 150, 60, self.global_vars["c_colortemp"])
             self.setstate(bl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
-        elif self.get_state("light.monitor", "brightness") < 60:
+        elif self.get_state("light.monitor", "brightness") <= 0:
             self.setstate(bl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
-        elif self.get_state("light.monitor", "brightness") >= 60:
+        elif self.get_state("light.monitor", "brightness") > 0:
             self.setstate(bl, 150, 60, self.global_vars["c_colortemp"])
             self.setstate(bl, self.global_vars["c_brightness"], 600, self.global_vars["c_colortemp"]) #Circadian hue
 
