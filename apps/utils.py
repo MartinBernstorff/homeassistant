@@ -1,4 +1,4 @@
-import appdaemon.api as appapi
+import appdaemon.appapi as appapi
 import time
 
 class utils(appapi.AppDaemon):
@@ -14,7 +14,8 @@ class utils(appapi.AppDaemon):
                             brightness=None,
                             t_fade=0,
                             color=None,
-                            post_delay=0):
+                            post_delay=0,
+                            modifier=1):
         """
             A function for conditional sequentilization
 
@@ -26,31 +27,35 @@ class utils(appapi.AppDaemon):
 
 
             Optional arguments:
+            post_delay: How long after the action there should be an
+                additional delay (in seconds)
+            modifier: Relative modifier for the delay
                 lights:
                     brightness: End brightness [0-255]
                     fade: How long the fade should take (in seconds)
                     color: End colour [X, Y]
-                    post_delay: How long after the action there should be an
-                        additional delay (in seconds)
+
         """
-        device, entity_id = self.split_entity(self.entity)
+        device, entity_id = self.split_entity(entity)
         if switch is not None and state is not None:
             if self.get_state(switch) == "on":
                 if device == "light":
                     if state == "on":
                         if color is not None:
-                            self.turn_on(entity, brightness=brightness, transition=t_fade * self.modifier, xy_color=color)
-                            time.sleep(t_fade * self.modifier)
-                            time.sleep(post_delay * self.modifier)
+                            self.turn_on(entity, brightness=brightness, transition=t_fade * modifier, xy_color=color)
+                            time.sleep(t_fade * modifier)
+                            time.sleep(post_delay * modifier)
                         else:
-                            self.turn_on(entity, brightness=brightness, transition=t_fade * self.modifier)
-                            time.sleep(t_fade * self.modifier)
-                            time.sleep(post_delay * self.modifier)
+                            self.turn_on(entity, brightness=brightness, transition=t_fade * modifier)
+                            time.sleep(t_fade * modifier)
+                            time.sleep(post_delay * modifier)
                     if state == "off":
                         self.turn_off(entity)
                 if state == "on":
                     self.turn_on(entity)
+                    time.sleep(post_delay * modifier)
                 if state == "off":
                     self.turn_off(entity)
+                    time.sleep(post_delay * modifier)
         else:
             self.log("Switch is {} and state is {}, exiting".format(switch, state), level="ERROR")

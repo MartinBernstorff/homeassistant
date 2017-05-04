@@ -18,6 +18,11 @@ class GoodNight(appapi.AppDaemon):
 
     def good_night(self, entity="", attribute="", old="", new="", kwargs=""):
         self.log("Starting good-night script")
-        for device in self.split_device_list(self.args["devices"]):
-            self.turn_off(device)
+        self.turn_off("group.all_lights")
+        self.turn_off("media_player.pioneer")
+        self.turn_off("input_boolean.mm")
+        self.turn_off("input_boolean.circadian")
+        self.turn_off("input_boolean.sunrise")
+        self.turn_off("input_boolean.carpediem")
+        self.turn_off("group.all_lights")
         self.turn_off(self.switch)
