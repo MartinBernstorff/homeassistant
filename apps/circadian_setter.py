@@ -1,7 +1,5 @@
 import appdaemon.appapi as appapi
-import circadian_gen
 import datetime
-from multiprocessing import Process
 
 #
 # Circadian app
@@ -47,7 +45,7 @@ class CircadianSetter(appapi.AppDaemon):
 
     def set_lights_quick(self, entity="", attribute="", old="", new="", kwargs=""):
         if self.get_state("input_boolean.circadian") == "on":
-            #self.log("Updating lights quickly, time is {}, color temp is {} and brightness is {}".format(self.time(), self.global_vars["c_colortemp"], self.global_vars["c_brightness"]))
+            self.log("Updating lights quickly,\n    Color: {}\n    Brightness: {}".format(self.global_vars["c_colortemp"], self.global_vars["c_brightness"]))
             self.setlight("light.monitor", 5, 1.4)
             self.setlight("light.reol", 2, 0.4)
             self.setlight("light.loft", 1, 0.6)
