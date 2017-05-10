@@ -92,7 +92,6 @@ class C_Gen_V2(appapi.AppDaemon):
         for timepoint in self.color_timepoint:
             if i < len(self.color_timepoint) - 1: # Don't run the loop for 23:59
 
-                # TODO: Convert timepoint[i][0] and timepoint[i+1][0] to datetime objects
                 t0 = self.now.replace(hour=int(self.color_timepoint[i][0][0:2]),
                                       minute=int(self.color_timepoint[i][0][3:5]),
                                       second=0) + self.global_vars["c_offset"]
