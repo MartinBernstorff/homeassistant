@@ -1,109 +1,145 @@
 import appdaemon.appapi as appapi
 import datetime
 import time
+from rgb_xy import Converter
+
+conv = Converter()
 
 #
 # Circadian app
 #
 # Args:
-#   None atm.
+#   None
 
-class CircadianGen(appapi.AppDaemon):
+class C_Gen_V2(appapi.AppDaemon):
 
     def initialize(self):
-        self.log("CircadianGen initialized")
+        self.log("C_Gen_V2 initialized")
         self.now = self.datetime()
-        b = self.now + datetime.timedelta(seconds=3)
+        b = self.now + datetime.timedelta(seconds=1)
 
         #Setup the input_selects
         self.update_offset()
         self.listen_state(self.update_offset, "input_select.circadian_hour")
         self.listen_state(self.update_offset, "input_select.circadian_minute")
 
-        self.listen_state(self.gen_circ_colortemp, "input_select.circadian_hour")
-        self.listen_state(self.gen_circ_colortemp, "input_select.circadian_minute")
+        self.listen_state(self.gen_c_brightness, "input_select.circadian_hour")
+        self.listen_state(self.gen_c_brightness, "input_select.circadian_minute")
 
-        self.listen_state(self.gen_circ_brightness, "input_select.circadian_hour")
-        self.listen_state(self.gen_circ_brightness, "input_select.circadian_minute")
+        self.listen_state(self.gen_c_color, "input_select.circadian_hour")
+        self.listen_state(self.gen_c_color, "input_select.circadian_minute")
 
         #Setup run_every
-        self.run_every(self.gen_circ_brightness, b, 60)
-        self.run_every(self.gen_circ_colortemp, b, 60)
+        self.run_every(self.gen_c_brightness, b, 60)
+        self.run_every(self.gen_c_color, b, 60)
 
-    def gen_circ_brightness(self, entity="", attribute="", old="", new="", kwargs=""):
-        self.now = self.datetime()
-        t0 = self.now.replace(hour=5, minute=0, second=0) + self.global_vars["c_offset"]
-        t1 = self.now.replace(hour=6, minute=0, second=0) + self.global_vars["c_offset"]
-        t2 = self.now.replace(hour=13, minute=0, second=0) + self.global_vars["c_offset"]
-        t3 = self.now.replace(hour=19, minute=0, second=0) + self.global_vars["c_offset"]
-        t4 = self.now.replace(hour=21, minute=0, second=0) + self.global_vars["c_offset"]
-        t5 = self.now.replace(hour=21, minute=15, second=0) + self.global_vars["c_offset"]
+        #Timepoints for brightness
+        self.brightness_timepoint = [["00:00", 20],
+                                     ["05:00", 20],
+                                     ["06:00", 688],
+                                     ["13:00", 688],
+                                     ["19:00", 638],
+                                     ["21:00", 128],
+                                     ["21:15", 20],
+                                     ["23:59", 20]
+                                    ]
 
-        if self.now > t0 and self.now <= t1:
-            self.set_circ_brightness(2.65, 0, t1, t0)
-        elif self.now > t1 and self.now <= t2:
-            self.set_circ_brightness(2.5, 2.65, t2, t1)
-        elif self.now > t2 and self.now <= t3:
-            self.global_vars["c_brightness"] = 638
-        elif self.now > t3 and self.now <= t4:
-            self.set_circ_brightness(0.5, 2.5, t4, t3)
-        elif self.now > t4 and self.now <= t5:
-            self.set_circ_brightness(0.08, 0.5, t5, t4)
-        else:
-            self.global_vars["c_brightness"] = 20
+        #Timepoints for color
+        self.color_timepoint = [["00:00", 255, 219, 147],
+                                ["13:00", 244, 249, 255],
+                                ["19:00", 255, 255, 255],
+                                ["20:45", 255, 178, 67],
+                                ["21:00", 255, 70, 0],
+                                ["23:59", 255, 70, 0]
+                               ]
 
-        #self.log("Set new circ brightness {} at {}".format(self.global_vars["c_brightness"], self.now))
+    def gen_c_brightness(self, *args, **kwargs):
+        i = 0
+        for timepoint in self.brightness_timepoint:
+            if i < len(self.brightness_timepoint) - 1: # Don't run the loop for 23:59
 
-    def set_circ_brightness(self, endbness, startbness, endtime, starttime):
-        base = 255
-        start = startbness
-        end = endbness
-        fadelength = (endtime-starttime).seconds
-        position = (self.now-starttime).seconds
+                t0 = self.now.replace(hour=int(self.brightness_timepoint[i][0][0:2]),
+                                      minute=int(self.brightness_timepoint[i][0][3:5]),
+                                      second=0) + self.global_vars["c_offset"]
 
-        self.global_vars["c_brightness"] = (start + (end - start) * position / fadelength) * base
+                t1 = self.now.replace(hour=int(self.brightness_timepoint[i+1][0][0:2]),
+                                      minute=int(self.brightness_timepoint[i+1][0][3:5]),
+                                      second=0) + self.global_vars["c_offset"]
 
-    def gen_circ_colortemp(self, entity="", attribute="", old="", new="", kwargs=""):
-        self.now = self.datetime()
-        t0 = self.now.replace(hour=0, minute=0, second=0) + self.global_vars["c_offset"]
-        t1 = self.now.replace(hour=0, minute=1, second=0) + self.global_vars["c_offset"]
-        t2 = self.now.replace(hour=13, minute=0, second=0) + self.global_vars["c_offset"]
-        t3 = self.now.replace(hour=19, minute=0, second=0) + self.global_vars["c_offset"]
-        t4 = self.now.replace(hour=20, minute=45, second=0) + self.global_vars["c_offset"]
-        t5 = self.now.replace(hour=21, minute=15, second=0) + self.global_vars["c_offset"]
+                if 1 == 0:
+                    self.log("For run {} \n   t0: {}\n   t1: {}".format(i+1, t0, t1))
 
-        if self.now > t0 and self.now <= t1:
-            self.set_circ_colortemp(0.4255, 0.5268, 0.3998, 0.4133, t1, t0)
-        elif self.now > t1 and self.now <= t2:
-            self.set_circ_colortemp(0.3136, 0.4255, 0.3237, 0.3998, t2, t1)
-        elif self.now > t2 and self.now <= t3:
-            self.set_circ_colortemp(0.4255, 0.3136, 0.3998, 0.3237, t3, t2)
-        elif self.now > t3 and self.now <= t4:
-            self.set_circ_colortemp(0.5268, 0.4255, 0.4133, 0.3998, t4, t3)
-        elif self.now > t4 and self.now <= t5:
-            self.set_circ_colortemp(0.704, 0.5268, 0.296, 0.4133, t5, t4)
-        else:
-            self.global_vars["c_colortemp"] = [ 0.704, 0.296 ]
+                if t0 < self.datetime() <= t1:
+                    if 1 == 0:
+                        self.log("\nTime is between \n    {} and \n    {}".format(t0, t1))
 
-        #self.log("Set new circ brightness {} at {}".format(self.global_vars["c_brightness"], self.time()))
+                    start = self.brightness_timepoint[i][1]
+                    end = self.brightness_timepoint[i+1][1]
+                    fade_length = (t1-t0).seconds
+                    position = (self.now-t0).seconds
 
-    def set_circ_colortemp(self, end_x, start_x, end_y, start_y, endtime, starttime):
-        fadelength = (endtime-starttime).seconds
-        position = (self.now-starttime).seconds
+                    if 1 == 0:
+                        self.log("c_brightness: {}".format((start + (end - start) * position / fade_length)))
+                        self.log("\nstart: {}\nend: {}\nfade_length: {}\nposition: {}\n".format(
+                            start, end, fade_length, position
+                        ))
 
-        self.x_now = start_x + (end_x - start_x) * position / fadelength
-        self.y_now = start_y + (end_y - start_y) * position / fadelength
+                    self.global_vars["c_brightness"] = (start + (end - start) * position / fade_length)
+                i += 1
 
-        self.global_vars["c_colortemp"] = [ self.x_now, self.y_now]
+    def gen_c_color(self, *args, **kwargs):
+        i = 0
+        for timepoint in self.color_timepoint:
+            if i < len(self.color_timepoint) - 1: # Don't run the loop for 23:59
+
+                t0 = self.now.replace(hour=int(self.color_timepoint[i][0][0:2]),
+                                      minute=int(self.color_timepoint[i][0][3:5]),
+                                      second=0) + self.global_vars["c_offset"]
+
+                t1 = self.now.replace(hour=int(self.color_timepoint[i+1][0][0:2]),
+                                      minute=int(self.color_timepoint[i+1][0][3:5]),
+                                      second=0) + self.global_vars["c_offset"]
+
+                if 1 == 0:
+                    self.log("For run {} \n   t0: {}\n   t1: {}".format(i+1, t0, t1))
+
+                if t0 < self.datetime() <= t1:
+                    if 1 == 0:
+                        self.log("\nTime is between \n    {}:{} and \n    {}:{}".format(self.color_timepoint[i][0][0:2],
+                                                                                        self.color_timepoint[i][0][3:5],
+                                                                                        self.color_timepoint[i+1][0][0:2],
+                                                                                        self.color_timepoint[i+1][0][3:5]))
+
+                    fade_length = (t1-t0).seconds
+                    position = (self.now-t0).seconds
+
+                    self.r_t0 = self.color_timepoint[i][1]
+                    self.g_t0 = self.color_timepoint[i][2]
+                    self.b_t0 = self.color_timepoint[i][3]
+
+                    self.t0_xy = conv.rgb_to_xy(self.r_t0,
+                                                self.g_t0,
+                                                self.b_t0)
+
+                    self.r_t1 = self.color_timepoint[i+1][1]
+                    self.g_t1 = self.color_timepoint[i+1][2]
+                    self.b_t1 = self.color_timepoint[i+1][3]
+
+                    self.t1_xy = conv.rgb_to_xy(self.r_t1,
+                                                self.g_t1,
+                                                self.b_t1)
+
+                    self.now_x = int((self.t0_xy[0] + (self.t1_xy[0] - self.t0_xy[0]) * position / fade_length))
+                    self.now_y = int((self.t0_xy[1] + (self.t1_xy[1] - self.t0_xy[1]) * position / fade_length))
+
+                    if 1 == 0:
+                        self.log("c_colortemp: {}".format(self.global_vars["c_colortemp"]))
+
+                    self.global_vars["c_colortemp"] = "[{}, {}]".format(self.now_x, self.now_y)
+                i += 1
 
     def update_offset(self, entity="", attribute="", old="", new="", kwargs=""):
         self.hour = int(self.get_state("input_select.circadian_hour"))
         self.minute = int(self.get_state("input_select.circadian_minute"))
         self.global_vars["c_offset"] = datetime.timedelta(hours=self.hour, minutes=self.minute)
-        self.log("Circadian_gen_updated time offset set to {}".format(self.global_vars["c_offset"]))
-
-"""
-[ 0.674, 0.322 ] #Red initial
-[ 0.5268, 0.4133 ] #Warm orange
-[ 0.4255, 0.3998 ] #Bright orange
-"""
+        self.log("c_offset: {}".format(self.global_vars["c_offset"]))
