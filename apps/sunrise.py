@@ -29,7 +29,7 @@ class Sunrise(appapi.AppDaemon):
         self.modifier = 1
         self.turn_off("input_boolean.circadian")
         self.log("The sun is rising in 45 mins!")
-        self.sunrise_timer = self.run_in(self.natural, 2400)
+        self.sunrise_timer = self.run_in(self.natural, 2700)
 
 
     #######################
