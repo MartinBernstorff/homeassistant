@@ -1,4 +1,5 @@
 import appdaemon.appapi as appapi
+import time
 
 """
  Off_scheduler
@@ -18,6 +19,14 @@ class GoodNight(appapi.AppDaemon):
 
     def good_night(self, entity="", attribute="", old="", new="", kwargs=""):
         self.log("Starting good-night script")
+        self.turn_off("group.all_lights")
+        self.turn_off("media_player.pioneer")
+        self.turn_off("input_boolean.mm")
+        self.turn_off("input_boolean.circadian")
+        self.turn_off("input_boolean.sunrise")
+        self.turn_off("input_boolean.carpediem")
+        self.turn_off("group.all_lights")
+        time.sleep(2)
         self.turn_off("group.all_lights")
         self.turn_off("media_player.pioneer")
         self.turn_off("input_boolean.mm")

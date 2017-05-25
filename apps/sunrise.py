@@ -28,8 +28,8 @@ class Sunrise(appapi.AppDaemon):
     def rise(self, entity="", attribute="", old="", new="", kwargs=""):
         self.modifier = 1
         self.turn_off("input_boolean.circadian")
-        self.log("The sun is rising in 45 mins!")
-        self.sunrise_timer = self.run_in(self.natural, 2700)
+        self.log("The sun is rising in {} mins!".format(self.modifier * 2700/60))
+        self.sunrise_timer = self.run_in(self.natural, self.modifier * 2700)
 
 
     #######################
@@ -75,10 +75,12 @@ class Sunrise(appapi.AppDaemon):
                 if device == "light":
                     if color is not None:
                         self.turn_on(entity, brightness = brightness, transition = t_fade * self.modifier, xy_color = color)
-                        time.sleep(t_fade * self.modifier)
-                        time.sleep(post_delay * self.modifier)
+                        if self.get_state(switch) == "on":
+                            time.sleep(t_fade * self.modifier)
+                            time.sleep(post_delay * self.modifier)
                     else:
                         self.turn_on(entity, brightness = brightness, transition = t_fade * self.modifier)
-                        time.sleep(t_fade * self.modifier)
-                        time.sleep(post_delay * self.modifier)
+                        if self.get_state(switch) == "on":
+                            time.sleep(t_fade * self.modifier)
+                            time.sleep(post_delay * self.modifier)
                 self.turn_on(entity)

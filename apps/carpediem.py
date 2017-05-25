@@ -44,6 +44,7 @@ class CarpeDiem(appapi.AppDaemon):
         elif self.get_state("light.monitor", "brightness") >= 60:
             self.setstate("light.monitor", self.global_vars["c_brightness"], 150, color=self.global_vars["c_colortemp"]) #Circadian hue
         self.turn_on("input_boolean.circadian") #Turn back on circadian
+        time.sleep(self.modulator * 1100)
         self.turn_off(self.args["switch"])
 
     def carpe_bathroom(self, entity, attribute, old, new, kwargs):
@@ -92,12 +93,14 @@ class CarpeDiem(appapi.AppDaemon):
         if self.get_state(switch) == "on":
             self.log("Set " + lt + " to fade in " + str(fade * self.modulator) + "s")
 
-            if color != "":
-                self.turn_on(lt, brightness=brightness, transition=self.modulator * fade, xy_color=color)
-            else:
-                self.turn_on(lt, brightness=brightness, transition=self.modulator * fade)
+            if self.get_state(switch) == "on":
+                if color != "":
+                    self.turn_on(lt, brightness=brightness, transition=self.modulator * fade, xy_color=color)
+                else:
+                    self.turn_on(lt, brightness=brightness, transition=self.modulator * fade)
 
-            time.sleep(self.modulator * fade)
+            if self.get_state(switch) == "on":
+                time.sleep(self.modulator * fade)
         else:
             self.log("Switch turned off, terminating")
 
