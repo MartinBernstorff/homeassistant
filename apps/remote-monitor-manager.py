@@ -18,4 +18,3 @@ class RemoteMonitorManager(appapi.AppDaemon):
 
         self.log("Running!")
         output = subprocess.check_output(self.path, shell=True)
-        self.log(str(output))
