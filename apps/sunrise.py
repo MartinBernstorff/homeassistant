@@ -27,9 +27,10 @@ class Sunrise(appapi.AppDaemon):
 
     def rise(self, entity="", attribute="", old="", new="", kwargs=""):
         self.modifier = 1
+        self.delay = 75 # Time in minutes to wait for sunrise, 45 + smart period (30) for Sleep as Android default
         self.turn_off("input_boolean.circadian")
-        self.log("The sun is rising in {} mins!".format(self.modifier * 2700/60))
-        self.sunrise_timer = self.run_in(self.natural, self.modifier * 2700)
+        self.log("The sun is rising in {} mins!".format(self.modifier * self.delay))
+        self.sunrise_timer = self.run_in(self.natural, self.modifier * self.delay*60)
 
 
     #######################
