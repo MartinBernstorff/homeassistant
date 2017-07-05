@@ -50,7 +50,8 @@ class CircadianSetter(appapi.AppDaemon):
             self.setlight("light.reol", 2, 0.4)
             self.setlight("light.loft", 1, 0.6)
         else:
-            self.log("Circadian switch is off, lights not updated")
+            # self.log("Circadian switch is off, lights not updated")
+            pass
 
     def set_toilet(self, entity="", attribute="", old="", new="", kwargs=""):
         if self.get_state("input_boolean.circadian") == "on":
