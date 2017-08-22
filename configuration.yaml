@@ -19,12 +19,6 @@ history:
 logbook:
 #sun:
 
-##Setup MQTT
-mqtt:
-  broker: 192.168.1.110
-  port: 1883
-  client_id: hass
-
 #Setup zones
 zone:
   - name: 'Home'
