@@ -30,3 +30,19 @@
       - +3
     icon: mdi:clock-fast
     initial: 0
+  context:
+    name: Contexts
+    options:
+      - Normal
+      - Cozy
+      - Sleep
+      - Movie-mode
+    icon: mdi:border-style
+    initial: Normal
+  playing_state:
+    name: playing_state
+    options:
+      - playing
+      - paused
+    icon: mdi:border-style
+    initial: paused
