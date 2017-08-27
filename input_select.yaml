@@ -37,6 +37,7 @@
       - Cozy
       - Sleep
       - Movie-mode
+      - Away
     icon: mdi:border-style
     initial: Normal
   playing_state:

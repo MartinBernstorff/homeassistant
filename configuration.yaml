@@ -94,7 +94,7 @@ scene: !include scenes.yaml
 #############
 ## SCRIPTS ##
 #############
-#script: !include scripts.yaml
+script: !include scripts.yaml
 
 ################
 ## Automation ##
