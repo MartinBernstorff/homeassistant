@@ -5,14 +5,25 @@
       - switch.bed_white
       - switch.bed_black
   light_automation:
-    name: Light automation
+    name: Circadian automations
     entities:
       - input_boolean.circadian
       - input_select.circadian_hour
       - input_select.circadian_minute
-      - input_boolean.sunrise
+      - input_boolean.sunrise_alarm
       - input_select.sunrise_hour
       - input_select.sunrise_minute
+  circadian:
+    name: Circadian triggers
+    entities:
+      - input_boolean.sunrise
+      - input_boolean.carpediem
+      - input_boolean.carpemieke
+      - input_boolean.good_night
+  context:
+    name: Contexts
+    entities:
+      - input_select.context
   media:
     name: Media
     icon: mdi:movie
@@ -27,9 +38,3 @@
     entities:
       - sensor.temperature
       - sensor.humidity
-  morning:
-    name: Morning & Evening
-    entities:
-      - input_boolean.carpediem
-      - input_select.carpediemfactor
-      - input_boolean.good_night

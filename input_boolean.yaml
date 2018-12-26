@@ -1,10 +1,18 @@
   sunrise:
-    name: Sunrise
+    name: Call sunrise now
+    icon: mdi:weather-sunset
+    initial: off
+  sunrise_alarm:
+    name: Sunrise alarm
     icon: mdi:weather-sunset
     initial: off
   carpediem:
     name: Carpe diem
     icon: mdi:duck
+    initial: off
+  carpemieke:
+    name: Carpe Mieke
+    icon: mdi:account-heart
     initial: off
   circadian:
     name: Circadian

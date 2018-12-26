@@ -1,0 +1,104 @@
+media_player.rasplex:
+  name:
+  platform: plex
+  unique_id: 4046d9ab-16c9-4565-9d48-b0f5bb14ec25
+sensor.illumination_286c07f0bbf5:
+  name:
+  platform: xiaomi_aqara
+  unique_id: illumination286c07f0bbf5
+light.gateway_light_286c07f0bbf5:
+  name:
+  platform: xiaomi_aqara
+  unique_id: rgb286c07f0bbf5
+binary_sensor.wall_switch_both_158d000183f392:
+  name:
+  platform: xiaomi_aqara
+  unique_id: dual_channel158d000183f392
+binary_sensor.switch_158d0001a1f52f:
+  name:
+  platform: xiaomi_aqara
+  unique_id: status158d0001a1f52f
+binary_sensor.wall_switch_left_158d000183f392:
+  name:
+  platform: xiaomi_aqara
+  unique_id: channel_0158d000183f392
+binary_sensor.motion_sensor_158d00012677c2:
+  name:
+  platform: xiaomi_aqara
+  unique_id: status158d00012677c2
+binary_sensor.wall_switch_right_158d000183f392:
+  name:
+  platform: xiaomi_aqara
+  unique_id: channel_1158d000183f392
+binary_sensor.door_window_sensor_158d00014d4000:
+  name:
+  platform: xiaomi_aqara
+  unique_id: status158d00014d4000
+media_player.batcave:
+  name:
+  platform: cast
+  unique_id: dd82c11e-bcd9-fabd-0bed-b605e23e7606
+light.reol:
+  name:
+  platform: hue
+  unique_id: 00:17:88:01:10:5c:63:79-0b
+light.bathroom_2:
+  name:
+  platform: hue
+  unique_id: 00:17:88:01:00:f6:53:e2-0b
+light.monitor:
+  name:
+  platform: hue
+  unique_id: 00:17:88:01:01:1d:a6:23-0b
+light.loft:
+  name:
+  platform: hue
+  unique_id: 00:17:88:01:00:e5:88:4d-0b
+light.fishbowl:
+  name:
+  platform: hue
+  unique_id: 00:17:88:01:00:db:98:d1-0b
+media_player.one:
+  name:
+  platform: plex
+  unique_id: a6bda2f59208c441-com-plexapp-android
+media_player.martins_macbook_air:
+  name:
+  platform: plex
+  unique_id: xt7wemhvw17rcvri73edbo6r
+media_player.martins_ipad:
+  name:
+  platform: plex
+  unique_id: 1EE36A9C-51FC-4AA1-BAFC-C93DE42627BC
+binary_sensor.switch_158d000201a251:
+  name:
+  platform: xiaomi_aqara
+  unique_id: status158d000201a251
+light.color_temperature_light_1:
+  name:
+  platform: hue
+  unique_id: 00:0b:57:ff:fe:f6:3b:a0-01
+light.ikea_loft:
+  name:
+  platform: hue
+  unique_id: 00:0b:57:ff:fe:ee:ea:9e-01
+binary_sensor.switch_158d000201a24c:
+  name:
+  platform: xiaomi_aqara
+  unique_id: status158d000201a24c
+light.color_temperature_light_1_2:
+  name:
+  platform: hue
+  unique_id: 90:fd:9f:ff:fe:86:1a:2b-01
+light.hallway_2:
+  name:
+  platform: hue
+  unique_id: 90:fd:9f:ff:fe:72:2b:00-01
+media_player.martins_iphone:
+  name:
+  platform: plex
+  unique_id: E765D979-7B3E-42A3-A587-10C9737A41FF
+media_player.safari:
+  name:
+  platform: plex
+  unique_id: xmc0c5gid9gc5jxcyrcbm84a
